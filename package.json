@@ -1,0 +1,50 @@
+{
+  "name": "esg-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "start": "nodemon server.js",
+    "reset": "rm -rf node_modules",
+    "reinstall": "rm -rf node_modules && npm i",
+    "security:fix": "npm audit fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andyyy26/ESG-Project.git"
+  },
+  "keywords": [
+    "esg"
+  ],
+  "author": "andy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andyyy26/ESG-Project/issues"
+  },
+  "homepage": "https://github.com/andyyy26/ESG-Project#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "app-root-path": "^3.0.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "crypto-random-string": "^3.3.0",
+    "date-fns": "^2.16.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.18.2",
+    "helmet": "^4.4.0",
+    "jest": "^26.4.2",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.20",
+    "mongo-sanitize": "^1.1.0",
+    "mongoose": "^5.10.3",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.4.17",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3"
+  }
+}
