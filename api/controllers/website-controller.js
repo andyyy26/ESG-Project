@@ -1,4 +1,9 @@
 const Page = require("../models/page-model");
+const {
+  create,
+  getAll
+} = require("../../middlewares/utils/db-service");
+const { async } = require("crypto-random-string");
 
 /**
  * List all
@@ -12,7 +17,7 @@ const Page = require("../models/page-model");
 //       });
 // };
 // Create new page
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Validate request
   if (!req.body) {
     res.status(400).send({
@@ -21,7 +26,7 @@ exports.create = (req, res) => {
   }
 
   const { id, title, description, image, status } = req.body;
-  // Create a Tutorial
+  // Create a page
   const page = new Page({
     id: id,
     title: title,
@@ -30,25 +35,27 @@ exports.create = (req, res) => {
     status: status
   });
 
-  // Save Tutorial in the database
-  Page.create(page, (err, data) => {
-    if (err)
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Page."
-      });
-    else res.send(data);
-  });
+  // Save page in the database
+  try {
+    const result = await create(page);
+    res.send(result);
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while creating the Page."
+    });
+  }
 };
 
-exports.listAll = (req, res) => {
+exports.listAll = async(req, res) => {
   const title = req.query.title;
-  Page.getAll(title, (err, data) => {
-    if (err)
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving pages."
-      });
-    else res.send(data);
-  });
+  try {
+    const result = await getAll(title);
+    res.send(result);
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while retrieving pages."
+    });
+  }
 };
