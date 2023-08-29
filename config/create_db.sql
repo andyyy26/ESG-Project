@@ -1,0 +1,9 @@
+CREATE SCHEMA IF NOT EXISTS esg;
+
+CREATE TABLE IF NOT EXISTS esg.pages(
+    id VARCHAR(10) NOT NULL PRIMARY KEY,
+    title VARCHAR(250) NULL,
+    description VARCHAR(250) NULL,
+    image VARCHAR(250) NULL,
+    status VARCHAR(8) NULL
+);
