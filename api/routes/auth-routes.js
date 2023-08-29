@@ -3,11 +3,11 @@ module.exports = (app) => {
   const auth = require('../controllers/auth-controller');
 
   app
-    .route('/api/v1/sign_up')
+    .route('/api/v1/auth/sign_up')
     .post(auth.signUp);
 
   app
-    .route('/api/v1/sign_in')
+    .route('/api/v1/auth/sign_in')
     .post(auth.login);
 
   app

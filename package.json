@@ -4,8 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
     "start": "nodemon server.js",
     "reset": "rm -rf node_modules",
     "reinstall": "rm -rf node_modules && npm i",
