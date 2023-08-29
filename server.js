@@ -6,14 +6,17 @@ const cors = require('cors');
 const morgan = require('morgan');
 const winston = require('./config/winston');
 const helmet = require('helmet');
+const fileUpload = require('express-fileupload');
 
 // Init Express
 const app = express();
 require('dotenv').config();
 
 // Server Config
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(express.static('public'));
+app.use(fileUpload());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('combined', { stream: winston.stream }));
 app.use(helmet());
 
@@ -31,11 +34,14 @@ app.use((req, res, next) => {
   next();
 });
 app.use(cors());
+console.log(`ANHBL+++++++++++++++1`);
 
 // Routes Definitions
 const websiteRoutes = require('./api/routes/website-routes');
+const cmsRoutes = require('./api/routes/cms-routes');
 websiteRoutes(app);
-
+cmsRoutes(app);
+console.log(`ANHBL+++++++++++++++2`);
 // 404 Handling
 app.use((req, res) => {
   winston.error(`'Hit 404' - ${req.originalUrl} - ${req.method} - ${req.ip}`);

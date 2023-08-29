@@ -4,5 +4,9 @@ module.exports = (app) => {
 
   app
     .route('/api/v1/')
-    .get(website.list);
+    .get(website.listAll);
+
+  app
+  .route('/api/v1/create_new_page')
+  .post(website.create);
 };
