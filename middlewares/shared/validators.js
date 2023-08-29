@@ -1,4 +1,4 @@
-const User = require('../api/models/userModel');
+const User = require('../../api/models/user-model');
 
 /**
  * isValidEmail helper method
@@ -16,15 +16,15 @@ const validateEmail = (email) => {
  * @returns {Boolean} True or False
  */
 const validatePassword = (password) => {
-  if (password.length <= 6 || password === '') {
-    return false;
+  if (password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{6,}$/)) {
+    return true;
   }
-  return true;
+  return false;
 };
 
 const checkEmailExists = (email) => {
-  const submittedEmail = email;
-  return User.find({ email: submittedEmail }).then((result) => {
+  const condition = `email='${email}'`;
+  return User.getByCondtion(condition).then((result) => {
     if (result && result.length > 0) {
       return false;
     } else {
@@ -33,11 +33,12 @@ const checkEmailExists = (email) => {
   });
 };
 
-const checkUserExists = async (uuid) => {
-  return User.findOne({ uniqueId: uuid }, (err, success) => {
-    if (err) {
+const checkUserExists = async (name) => {
+  const condition = `name=$${name}`;
+  return User.getByCondtion(condition).then((result) => {
+    if (result && result.length > 0) {
       return false;
-    } else if (success) {
+    } else {
       return true;
     }
   });

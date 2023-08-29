@@ -1,21 +1,9 @@
 const Page = require("../models/page-model");
-const {
-  create,
-  getAll
-} = require("../../middlewares/utils/db-service");
-const { async } = require("crypto-random-string");
+const { 
+  CREATED_ERROR,
+  RETRIEVE_ERROR
+ } = require('../../middlewares/constant/const');
 
-/**
- * List all
- * GET
- */
-// exports.list = async (req, res) => {
-//     res.status(200).json({
-//         success: true,
-//         message: 'List all data',
-//         data: {},
-//       });
-// };
 // Create new page
 exports.create = async (req, res) => {
   // Validate request
@@ -37,25 +25,25 @@ exports.create = async (req, res) => {
 
   // Save page in the database
   try {
-    const result = await create(page);
+    const result = await Page.create(page);
     res.send(result);
   } catch (err) {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while creating the Page."
+        err.message || CREATED_ERROR + "page."
     });
   }
 };
 
 exports.listAll = async(req, res) => {
-  const title = req.query.title;
   try {
-    const result = await getAll(title);
+    const result = await Page.getAll();
     res.send(result);
   } catch (err) {
     res.status(500).send({
       message:
-        err.message || "Some error occurred while retrieving pages."
+        err.message || RETRIEVE_ERROR + "pages."
     });
   }
 };
+//"UPDATE pages SET title = ?, description = ?, status = ? WHERE id = ?"

@@ -1,29 +1,29 @@
 const sql = require("../../middlewares/database/database.js");
 
-async function create(page) {
+async function create(data, table) {
     return new Promise((resolve, reject) => {
-        sql.query("INSERT INTO pages SET ?", page, (err, res) => {
+        sql.query(`INSERT INTO ${table} SET ?`, data, (err, res) => {
             if (err) {
-                console.log("Create page error: ", err);
+                console.log(`Created ${table} error: `, err);
                 return reject(err);
             }
 
-            console.log("Created page: ", { id: res.insertId, ...page });
-            return resolve({ id: res.insertId, ...page });
+            console.log("Created: ", { id: res.insertId, ...data });
+            return resolve({ id: res.insertId, ...data });
         });
     });
 }
 
-async function findById(id) {
+async function findById(id, table) {
     return new Promise((resolve, reject) => {
-        sql.query(`SELECT * FROM pages WHERE id = ${id}`, (err, res) => {
+        sql.query(`SELECT * FROM ${table} WHERE id = ${id}`, (err, res) => {
             if (err) {
-                console.log("finByID error: ", err);
+                console.log(`finByID ${table} error: `, err);
                 return reject(err);
             }
 
             if (res.length) {
-                console.log("found page: ", res[0]);
+                console.log("Data: ", res[0]);
                 return resolve(res[0]);
             }
             return resolve({ kind: "not_found" });
@@ -31,48 +31,42 @@ async function findById(id) {
     });
 }
 
-async function getAll(title) {
+async function getAll(table) {
     return new Promise((resolve, reject) => {
-        let query = "SELECT * FROM pages";
-
-        if (title) {
-            query += ` WHERE title LIKE '%${title}%'`;
-        }
-
+        const query = `SELECT * FROM ${table}`;
         sql.query(query, (err, res) => {
             if (err) {
-                console.log("getAll error: ", err);
+                console.log(`getAll ${table} error: `, err);
                 return reject(err);
             }
 
-            console.log("pages: ", res);
+            console.log("Data: ", res);
             return resolve(res);
         });
     });
 }
 
-async function getAllPublished() {
+async function getByCondtion(condition, table) {
     return new Promise((resolve, reject) => {
-        sql.query("SELECT * FROM pages WHERE status=published", (err, res) => {
+        sql.query(`SELECT * FROM ${table} WHERE ${condition}`, (err, res) => {
             if (err) {
-                console.log("getAllPublished error: ", err);
+                console.log(`getByCondtion ${table} error: `, err);
                 return reject(err);
             }
 
-            console.log("pages: ", res);
+            console.log("Data: ", res);
             return resolve(res);
         });
     });
 }
 
-async function updateById(id, page) {
+async function updateByCondition(data, condition, table) {
     return new Promise((resolve, reject) => {
         sql.query(
-            "UPDATE pages SET title = ?, description = ?, status = ? WHERE id = ?",
-            [page.title, page.description, page.status, id],
+            condition,
             (err, res) => {
                 if (err) {
-                    console.log("updateById error: ", err);
+                    console.log(`updateById ${table} error: `, err);
                     return reject(err);
                 }
 
@@ -80,18 +74,18 @@ async function updateById(id, page) {
                     return resolve({ kind: "not_found" });
                 }
 
-                console.log("updated page: ", { id: id, ...page });
-                return resolve({ id: id, ...page });
+                console.log(`Updated ${table}: `, { id: data.id, ...data });
+                return resolve({ id: data.id, ...data });
             }
         );
     });
 }
 
-async function remove(id) {
+async function remove(condition, table) {
     return new Promise((resolve, reject) => {
-        sql.query("DELETE FROM pages WHERE id = ?", id, (err, res) => {
+        sql.query(`DELETE FROM ${table} WHERE ${condition}`, (err, res) => {
             if (err) {
-                console.log("remove error: ", err);
+                console.log(`Remove ${table} error: `, err);
                 return reject(err);
             }
 
@@ -99,21 +93,21 @@ async function remove(id) {
                 return resolve({ kind: "not_found" });
             }
 
-            console.log("deleted page with id: ", id);
+            console.log(`Deleted ${table} with condition: `, condition);
             return resolve(res);
         });
     });
 }
 
-async function removeAll() {
+async function removeAll(table) {
     return new Promise((resolve, reject) => {
-        sql.query("DELETE FROM pages", (err, res) => {
+        sql.query(`DELETE FROM ${table}`, (err, res) => {
             if (err) {
-                console.log("removeAll error: ", err);
+                console.log(`removeAll ${table} error: `, err);
                 return reject(err);
             }
 
-            console.log(`deleted ${res.affectedRows} pages`);
+            console.log(`Deleted ${res.affectedRows} ${table}`);
             return resolve(res);
         });
     });
@@ -123,8 +117,8 @@ module.exports = {
     create,
     findById,
     getAll,
-    getAllPublished,
-    updateById,
+    getByCondtion,
+    updateByCondition,
     remove,
     removeAll
 };

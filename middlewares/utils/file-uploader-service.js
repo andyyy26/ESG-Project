@@ -1,5 +1,4 @@
 const { google } = require('googleapis');
-const drive = require('../../config/credential/google_drive');
 const stream = require("stream");
 
 const FileTypeEnum = {
@@ -15,7 +14,7 @@ async function uploadFile(file) {
     try {
         const auth = new google.auth.GoogleAuth({
             keyFile: './config/credential/googleapis.json',
-            scopes: [drive.scope]
+            scopes: [process.env.SCOPE]
         })
 
         const driveService = google.drive({
@@ -41,13 +40,13 @@ async function uploadFile(file) {
             case FileTypeEnum.JPEG:
             case FileTypeEnum.PNG:
             case FileTypeEnum.JPG:
-                fileMetaData.parents.push(drive.imageFolder);
+                fileMetaData.parents.push(process.env.IMAGE_FOLDER);
                 media.mimeType = `image/${mimeType}`;
                 break;
             case FileTypeEnum.DOCX:
             case FileTypeEnum.PDF:
             case FileTypeEnum.MP4:
-                fileMetaData.parents.push(drive.documentFolder);
+                fileMetaData.parents.push(process.env.DOCUMENT_FOLDER);
                 media.mimeType = `file/${mimeType}`;
                 break;
             default:
