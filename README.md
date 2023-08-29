@@ -59,7 +59,7 @@ Allows a user to get a password reset code emailed to them.
   }
 ```
 
-#### `/api/v1/auth/password-reset/verify-code
+#### `/api/v1/auth/password-reset/verify-code`
 
 Allows a user to get a password reset code emailed to them.
 
