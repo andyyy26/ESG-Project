@@ -7,7 +7,7 @@
 
 1. Add a `.env` flie to the root directory when first cloning this project for storing environment variables
 
-2. Add a `JWT_SECRET` to the `.env` file
+2. Add a all configs to the `.env` file
 
 3. Start the server with nodemon: `npm run start`. Currently the default port for the server is `3000` and this can be set in the `.env`. This is to prevent clashes when running the server and clients in dev locally.
 
