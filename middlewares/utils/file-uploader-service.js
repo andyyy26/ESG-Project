@@ -13,7 +13,7 @@ const FileTypeEnum = {
 async function uploadFile(file) {
     try {
         const auth = new google.auth.GoogleAuth({
-            keyFile: './config/credential/googleapis.json',
+            keyFile: '/etc/secrets/googleapis.json',
             scopes: [process.env.SCOPE]
         })
 
