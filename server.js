@@ -34,14 +34,13 @@ app.use((req, res, next) => {
   next();
 });
 app.use(cors());
-console.log(`ANHBL+++++++++++++++1`);
 
 // Routes Definitions
 const websiteRoutes = require('./api/routes/website-routes');
 const cmsRoutes = require('./api/routes/cms-routes');
 websiteRoutes(app);
 cmsRoutes(app);
-console.log(`ANHBL+++++++++++++++2`);
+
 // 404 Handling
 app.use((req, res) => {
   winston.error(`'Hit 404' - ${req.originalUrl} - ${req.method} - ${req.ip}`);
