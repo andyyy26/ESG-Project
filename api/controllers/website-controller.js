@@ -1,4 +1,5 @@
 const Form = require("../models/form-model");
+const Post = require("../models/post-model");
 const { 
   CREATED_ERROR,
   RETRIEVE_ERROR
@@ -49,9 +50,9 @@ exports.saveForm = async (req, res) => {
   }
 };
 
-// Save form
+// Get user profile
 exports.getProfile = async (req, res) => {
-  const { user_id } = req.params;
+  const { user_id } = req.query;
   try {
     const field = "user_id, organization";
     const condition = `user_id = '${user_id}' LIMIT 1`;
@@ -61,6 +62,20 @@ exports.getProfile = async (req, res) => {
     res.status(500).send({
       message:
         err.message || RETRIEVE_ERROR + "profile."
+    });
+  }
+};
+
+exports.getPageInfo = async (req, res) => {
+  const { page_id, limit, offset } = req.query;
+  try {
+    const condition = `page_id = '${page_id}' LIMIT ${offset},${limit}`;
+    const profile = await Post.getByCondtion(condition);
+    res.send(profile);
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || RETRIEVE_ERROR + "posts."
     });
   }
 };

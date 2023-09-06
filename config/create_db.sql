@@ -49,3 +49,16 @@ CREATE TABLE IF NOT EXISTS esg.forms(
     FOREIGN KEY (user_id) REFERENCES users (id),
     PRIMARY KEY(id)  
 );
+
+CREATE TABLE IF NOT EXISTS esg.posts(
+    id int NOT NULL AUTO_INCREMENT,
+    title VARCHAR(250) NULL,
+    source VARCHAR(64) NULL,
+    release_date VARCHAR(32) NULL,
+    image VARCHAR(250) NULL,
+    type VARCHAR(16) NULL,
+    page_id char(10) NOT NULL,
+    -- INDEX (page_id),
+    -- FOREIGN KEY (page_id) REFERENCES pages (id),
+    PRIMARY KEY(id)  
+);

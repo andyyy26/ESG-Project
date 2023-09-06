@@ -3,8 +3,12 @@ module.exports = (app) => {
   const website = require('../controllers/website-controller');
 
   app
-  .route('/api/v1/profile/:user_id')
+  .route('/api/v1/profile')
   .get(website.getProfile)
+
+  app
+  .route('/api/v1/page_info')
+  .get(website.getPageInfo)
   
   app
   .route('/api/v1/save_form')
