@@ -296,3 +296,22 @@ exports.resetPassword = async (req, res) => {
     }
   }
 };
+
+exports.validateToken = async(req, res) => {
+  const { token } = req.query;
+  const decodeToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+  const expireTimeInMilliseconds = decodeToken.exp * 1000; 
+  if(expireTimeInMilliseconds >  Date.now()) {
+    res.status(200).json({
+      success: true,
+      message: 'Valid token!!!',
+      data: token,
+    });
+  } else {
+    res.status(401).json({
+      success: false,
+      message: 'Invalid token!!!',
+      data: token,
+    });
+  }
+};

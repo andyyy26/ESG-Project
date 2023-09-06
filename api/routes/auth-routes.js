@@ -11,10 +11,14 @@ module.exports = (app) => {
     .post(auth.login);
 
   app
-    .route('/api/v1/auth/password-reset/get-code')
+    .route('/api/v1/auth/password-reset/get_code')
     .post(auth.getResetPassCode);
 
   app
-    .route('/api/v1/auth/password-reset/verify-code')
+    .route('/api/v1/auth/password-reset/verify_code')
     .post(auth.resetPassword);
+
+  app
+  .route('/api/v1/auth/verify_token')
+  .post(auth.validateToken);
 };
