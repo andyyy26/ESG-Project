@@ -7,8 +7,8 @@ module.exports = (app) => {
   .get(website.getProfile)
 
   app
-  .route('/api/v1/page_info')
-  .get(website.getPageInfo)
+  .route('/api/v1/posts')
+  .get(website.getPosts)
   
   app
   .route('/api/v1/save_form')

@@ -66,7 +66,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-exports.getPageInfo = async (req, res) => {
+exports.getPosts = async (req, res) => {
   const { page_id, limit, offset } = req.query;
   try {
     const condition = `page_id = '${page_id}' LIMIT ${offset},${limit}`;
