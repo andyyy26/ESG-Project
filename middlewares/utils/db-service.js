@@ -64,7 +64,7 @@ async function getFieldsByCondition(fields, condition, table) {
     return new Promise((resolve, reject) => {
         sql.query(`SELECT ${fields} FROM ${table} WHERE ${condition}`, (err, res) => {
             if (err) {
-                console.log(`getByCondtion ${table} error: `, err);
+                console.log(`getFieldsByCondition ${table} error: `, err);
                 return reject(err);
             }
 

@@ -54,7 +54,7 @@ exports.getProfile = async (req, res) => {
   const { user_id } = req.params;
   try {
     const field = "user_id, organization";
-    const condition = `user_id='${user_id} LIMIT 1'`;
+    const condition = `user_id = '${user_id}' LIMIT 1`;
     const profile = await Form.getFieldsByCondition(field, condition);
     res.send(profile);
   } catch (err) {
