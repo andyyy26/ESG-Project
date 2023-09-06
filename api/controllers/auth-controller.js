@@ -160,7 +160,7 @@ exports.signUp = async (req, res) => {
 
       user.token = token;
       delete user.password;
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         message: 'User created',
         data: { user: user }

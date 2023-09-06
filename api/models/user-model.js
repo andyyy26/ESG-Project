@@ -18,21 +18,21 @@ const {
     this.password = user.password;
   };
   
-  User.create = async(user) => create(user, TABLE);
+  User.create = async(user) => await create(user, TABLE);
   
-  User.findById = (id) => findById(id, TABLE);
+  User.findById = async(id) => await findById(id, TABLE);
   
-  User.getAll = () => getAll(TABLE);
+  User.getAll = async() => await getAll(TABLE);
   
-  User.getByCondtion = (condition) => getByCondtion(condition, TABLE);
+  User.getByCondtion = async(condition) => await getByCondtion(condition, TABLE);
   
-  User.updateByCondition = (condition) => {
+  User.updateByCondition = async(condition) => {
     const query = `UPDATE ${TABLE} SET ${condition}`;
-    updateByCondition(query, TABLE);
+    await updateByCondition(query, TABLE);
   }
   
-  User.remove = (condition) => remove(condition, TABLE);
+  User.remove = async(condition) => await remove(condition, TABLE);
   
-  User.removeAll = () => removeAll(TABLE);
+  User.removeAll = async() => await removeAll(TABLE);
   
   module.exports = User;

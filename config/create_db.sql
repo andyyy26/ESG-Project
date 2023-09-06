@@ -38,3 +38,14 @@ CREATE TABLE IF NOT EXISTS esg.user_info(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
 );
+
+CREATE TABLE IF NOT EXISTS esg.forms(
+    id int NOT NULL AUTO_INCREMENT,
+    form_id VARCHAR(250) NULL,
+    organization LONGTEXT NULL,
+    data LONGTEXT NULL,
+    user_id VARCHAR(250) NOT NULL,
+    INDEX (user_id),
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    PRIMARY KEY(id)  
+);

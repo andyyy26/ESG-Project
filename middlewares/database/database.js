@@ -1,6 +1,5 @@
 const mysql = require("mysql");
-console.log(`HOST: ${process.env.DB_HOST}`);
-console.log(`USER: ${process.env.DB_USER}`);
+
 var connection = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,

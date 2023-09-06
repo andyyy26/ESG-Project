@@ -15,20 +15,20 @@ const {
     this.code = userInfo.code;
   };
   
-  UserInfo.create = async(user) => create(user, TABLE);
+  UserInfo.create = async(user) => await create(user, TABLE);
   
-  UserInfo.findById = (id) => findById(id, TABLE);
+  UserInfo.findById = async (id) => await findById(id, TABLE);
   
-  UserInfo.getAll = () => getAll(TABLE);
+  UserInfo.getAll = async () => await getAll(TABLE);
   
-  UserInfo.getByCondtion = (condition) => getByCondtion(condition, TABLE);
+  UserInfo.getByCondtion = async (condition) => await getByCondtion(condition, TABLE);
   
-  UserInfo.updateByCondition = (condition) => {
+  UserInfo.updateByCondition = async (condition) => {
     const query = `UPDATE ${TABLE} SET ${condition}`;
-    updateByCondition(query, TABLE);
+    await updateByCondition(query, TABLE);
   }  
-  UserInfo.remove = (condition) => remove(condition, TABLE);
+  UserInfo.remove = async (condition) => await remove(condition, TABLE);
   
-  UserInfo.removeAll = () => removeAll(TABLE);
+  UserInfo.removeAll = async () => await removeAll(TABLE);
   
   module.exports = UserInfo;

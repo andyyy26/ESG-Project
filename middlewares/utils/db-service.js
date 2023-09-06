@@ -1,4 +1,4 @@
-const sql = require("../../middlewares/database/database.js");
+const sql = require("../../middlewares/database/database");
 
 async function create(data, table) {
     return new Promise((resolve, reject) => {
@@ -49,6 +49,20 @@ async function getAll(table) {
 async function getByCondtion(condition, table) {
     return new Promise((resolve, reject) => {
         sql.query(`SELECT * FROM ${table} WHERE ${condition}`, (err, res) => {
+            if (err) {
+                console.log(`getByCondtion ${table} error: `, err);
+                return reject(err);
+            }
+
+            console.log("Data: ", res);
+            return resolve(res);
+        });
+    });
+}
+
+async function getFieldsByCondition(fields, condition, table) {
+    return new Promise((resolve, reject) => {
+        sql.query(`SELECT ${fields} FROM ${table} WHERE ${condition}`, (err, res) => {
             if (err) {
                 console.log(`getByCondtion ${table} error: `, err);
                 return reject(err);
@@ -118,6 +132,7 @@ module.exports = {
     findById,
     getAll,
     getByCondtion,
+    getFieldsByCondition,
     updateByCondition,
     remove,
     removeAll

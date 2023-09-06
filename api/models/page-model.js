@@ -18,21 +18,21 @@ const Page = function(page) {
   this.status = page.status;
 };
 
-Page.create = async(page) => create(page, TABLE);
+Page.create = async(page) => await create(page, TABLE);
 
-Page.findById = (id) => findById(id, TABLE);
+Page.findById = async(id) => await findById(id, TABLE);
 
-Page.getAll = () => getAll(TABLE);
+Page.getAll = async() => await getAll(TABLE);
 
-Page.getByCondtion = (condition) => getByCondtion(condition, TABLE);
+Page.getByCondtion = async(condition) => await getByCondtion(condition, TABLE);
 
-Page.updateByCondition = (condition) => {
+Page.updateByCondition = async(condition) => {
   const query = `UPDATE ${TABLE} SET ${condition}`;
-  updateByCondition(query, TABLE);
+  await updateByCondition(query, TABLE);
 }
 
-Page.remove = (condition) => remove(condition, TABLE);
+Page.remove = async(condition) => await remove(condition, TABLE);
 
-Page.removeAll = () => removeAll(TABLE);
+Page.removeAll = async() => await removeAll(TABLE);
 
 module.exports = Page;
