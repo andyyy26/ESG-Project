@@ -317,8 +317,6 @@ exports.validateToken = async(req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    const authHeader = req.headers['cookie']; // get the session cookie from request header
-    if (!authHeader) return res.sendStatus(204); // No content
     res.setHeader('Clear-Site-Data', '"cookies", "storage"');
     res.status(200).json({ status: 'success', message: 'You are logged out!' });
   } catch (err) {
