@@ -57,8 +57,18 @@ exports.getProfile = async (req, res) => {
   try {
     const field = "user_id, organization";
     const condition = `user_id = '${user_id}' AND form_id = '${form_id}' ORDER BY id DESC LIMIT 1`;
-    const profile = await Form.getFieldsByCondition(field, condition);
-    res.send(profile);
+    const profileArr = await Form.getFieldsByCondition(field, condition);
+    const profile = profileArr.pop()
+
+    if (!profile) {
+      const results = { 
+        user_id: user_id,
+        organization: null
+      }
+      res.send(results);
+    } else {
+      res.send(profile);
+    }
   } catch (err) {
     res.status(500).send({
       message:
