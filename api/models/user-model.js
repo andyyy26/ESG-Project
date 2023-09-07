@@ -26,9 +26,9 @@ const {
   
   User.getByCondtion = async(condition) => await getByCondtion(condition, TABLE);
   
-  User.updateByCondition = async(condition) => {
+  User.updateByCondition = async(condition, data) => {
     const query = `UPDATE ${TABLE} SET ${condition}`;
-    await updateByCondition(query, TABLE);
+    await updateByCondition(data, query, TABLE);
   }
   
   User.remove = async(condition) => await remove(condition, TABLE);

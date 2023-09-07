@@ -23,7 +23,7 @@ const UserInfo = require('../models/user-info-model');
  * }
  */
 exports.login = async (req, res) => {
-  const { email, password, remember } = req.body;
+  const { email, password } = req.body;
   if (!email || !password) {
     res.status(400).json({
       success: false,
@@ -35,7 +35,6 @@ exports.login = async (req, res) => {
       const condition = `email='${sanitize(email)}'`;
       const existedUser = await User.getByCondtion(condition);
       const user = existedUser.pop();
-      console.log(`USER: ${JSON.stringify(user)}`);
       if (!user) {
         res.status(400).json({
           success: false,
@@ -56,11 +55,11 @@ exports.login = async (req, res) => {
             process.env.JWT_SECRET,
             {
               // TODO: SET JWT TOKEN DURATION HERE
-              expiresIn: remember ? process.env.EXPIRES_IN : '1h',
+              expiresIn: process.env.EXPIRES_IN,
             }
           );
           res.cookie('session', token, {
-            expiresIn: remember ? process.env.EXPIRES_IN : '1h',
+            expiresIn: process.env.EXPIRES_IN,
           });
           user.token = token;
           delete user.password;

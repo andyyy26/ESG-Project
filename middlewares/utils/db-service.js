@@ -78,6 +78,7 @@ async function updateByCondition(data, condition, table) {
     return new Promise((resolve, reject) => {
         sql.query(
             condition,
+            data,
             (err, res) => {
                 if (err) {
                     console.log(`updateById ${table} error: `, err);

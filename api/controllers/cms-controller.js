@@ -34,7 +34,7 @@ exports.uploadImage = async (req, res) => {
       res.status(200).json({
         success: true,
         message: UPLOAD_FILE_SUCCESS,
-        data: { image_url: GOOGLE_DRIVE_URL + data },
+        data: { file_url: GOOGLE_DRIVE_URL + data },
       });
     })
 };

@@ -22,9 +22,6 @@ exports.saveForm = async (req, res) => {
     process.env.JWT_SECRET
   );
 
-  // const decodeToken = JSON.parse(Buffer.from(encodingOrganization.split('.')[1], 'base64').toString());
-  // console.log(JSON.stringify(decodeToken));
-
   const encodingData = jwt.sign(
     { data: data },
     process.env.JWT_SECRET
@@ -41,7 +38,11 @@ exports.saveForm = async (req, res) => {
   // Save form in the database
   try {
     const result = await Form.create(form);
-    res.send(result);
+    res.status(200).json({
+      success: true,
+      message: 'Save form data successfully',
+      data: result,
+    });
   } catch (err) {
     res.status(500).send({
       message:
