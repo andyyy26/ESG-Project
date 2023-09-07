@@ -3,7 +3,6 @@ const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const cryptoRandomString = require('crypto-random-string');
 const { v4: uuidv4 } = require('uuid');
-const sanitize = require('mongo-sanitize');
 const {
   checkEmailExists,
   validateEmail,
@@ -32,7 +31,7 @@ exports.login = async (req, res) => {
     });
   } else {
     try {
-      const condition = `email='${sanitize(email)}'`;
+      const condition = `email='${email}'`;
       const existedUser = await User.getByCondtion(condition);
       const user = existedUser.pop();
       if (!user) {
@@ -81,7 +80,7 @@ exports.login = async (req, res) => {
 };
 
 /**
- * Creates a new user object in the DB
+ * Register
  * POST:
  * {
  *  "id": "string with unique uuid for DB queries without exposing DB ID"
@@ -91,7 +90,7 @@ exports.login = async (req, res) => {
  *  "password": "Abc123!"
  * }
  */
-exports.signUp = async (req, res) => {
+exports.register = async (req, res) => {
   const {
     first_name,
     last_name,
@@ -192,7 +191,7 @@ exports.getResetPassCode = async (req, res) => {
     });
   } else {
     try {
-      const condition = `email='${sanitize(email)}'`;
+      const condition = `email='${email}'`;
       const existedUser = await User.getByCondtion(condition);
       const user = existedUser.pop();
       console.log(JSON.stringify(user));
@@ -242,7 +241,6 @@ exports.getResetPassCode = async (req, res) => {
  * {
  * "email": "",
  * "password": "",
- * "new_password": "",
  * "code": ""
  * }
  */
@@ -263,7 +261,7 @@ exports.resetPassword = async (req, res) => {
     });
   } else {
     try {
-      const condition = `email='${sanitize(email)}'`;
+      const condition = `email='${email}'`;
       const response = await UserInfo.getByCondtion(condition);
       if (response.length === 0) {
         res.status(400).json({
@@ -277,7 +275,7 @@ exports.resetPassword = async (req, res) => {
         const updatedCondition = `password = ? WHERE email = ?`
         await User.updateByCondition(
           updatedCondition,
-          [newHashedPw, sanitize(email)]
+          [newHashedPw, email]
         );
         await UserInfo.remove(condition);
         res.status(200).json({

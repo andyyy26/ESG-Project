@@ -4,7 +4,7 @@ module.exports = (app) => {
 
   app
     .route('/api/v1/auth/sign_up')
-    .post(auth.signUp);
+    .post(auth.register);
 
   app
     .route('/api/v1/auth/sign_in')
