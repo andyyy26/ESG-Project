@@ -53,10 +53,10 @@ exports.saveForm = async (req, res) => {
 
 // Get user profile
 exports.getProfile = async (req, res) => {
-  const { user_id } = req.query;
+  const { user_id, form_id } = req.query;
   try {
     const field = "user_id, organization";
-    const condition = `user_id = '${user_id}' LIMIT 1`;
+    const condition = `user_id = '${user_id}' AND form_id = '${form_id}' ORDER BY id DESC LIMIT 1`;
     const profile = await Form.getFieldsByCondition(field, condition);
     res.send(profile);
   } catch (err) {
