@@ -21,4 +21,8 @@ module.exports = (app) => {
   app
   .route('/api/v1/auth/verify_token')
   .post(auth.validateToken);
+
+  app
+  .route('/api/v1/auth/sign_out')
+  .post(auth.logout)
 };
