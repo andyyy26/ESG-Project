@@ -90,3 +90,17 @@ exports.getPosts = async (req, res) => {
     });
   }
 };
+
+exports.searchPosts = async (req, res) => {
+  const { query, limit, offset } = req.body;
+  try {
+    const condition = `content like '%${query}%' LIMIT ${offset},${limit}`;
+    const profile = await Post.getByCondtion(condition);
+    res.send(profile);
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || RETRIEVE_ERROR + "posts."
+    });
+  }
+};

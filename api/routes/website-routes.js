@@ -13,4 +13,8 @@ module.exports = (app) => {
   app
   .route('/api/v1/save_form')
   .post(website.saveForm);
+
+  app
+  .route('/api/v1/search')
+  .post(website.searchPosts);
 };
