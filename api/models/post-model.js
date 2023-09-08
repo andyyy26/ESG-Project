@@ -16,7 +16,9 @@ const {
     this.source = post.source;
     this.release_date = post.release_date;
     this.image = post.image;
-    this.type = post.type;
+    this.category = post.category;
+    this.content = post.content;
+    this.content_type = post.content_type;
   };
   
   Post.create = async(post) => await create(post, TABLE);
