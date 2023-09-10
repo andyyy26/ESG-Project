@@ -19,6 +19,7 @@ const {
     this.category = post.category;
     this.content = post.content;
     this.content_type = post.content_type;
+    this.status = post.status;
   };
   
   Post.create = async(post) => await create(post, TABLE);

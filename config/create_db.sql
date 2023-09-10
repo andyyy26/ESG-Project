@@ -1,32 +1,12 @@
 CREATE SCHEMA IF NOT EXISTS esg;
 
-CREATE TABLE IF NOT EXISTS esg.pages(
-    id VARCHAR(10) NOT NULL PRIMARY KEY,
-    title VARCHAR(250) NULL,
-    description VARCHAR(250) NULL,
-    image VARCHAR(250) NULL,
-    status VARCHAR(16) NULL
-);
-
-CREATE TABLE IF NOT EXISTS esg.page_info(
-    id int NOT NULL AUTO_INCREMENT,
-    title VARCHAR(250) NULL,
-    description VARCHAR(250) NULL,
-    image VARCHAR(250) NULL,
-    type VARCHAR(250) NULL,
-    action VARCHAR(16) NULL,
-    FK_pages VARCHAR(10) NOT NULL,  
-    INDEX (FK_pages),  
-    FOREIGN KEY (FK_pages) REFERENCES pages (id),  
-    PRIMARY KEY(id)  
-);
-
 CREATE TABLE IF NOT EXISTS esg.users(
     id VARCHAR(250) NOT NULL PRIMARY KEY,
     first_name VARCHAR(250) NULL,
     last_name VARCHAR(250) NULL,
     email VARCHAR(250) NULL,
     password VARCHAR(250) NULL,
+    role CHAR(5) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
 );
@@ -54,13 +34,20 @@ CREATE TABLE IF NOT EXISTS esg.posts(
     id int NOT NULL AUTO_INCREMENT,
     title VARCHAR(250) NULL,
     source VARCHAR(64) NULL,
-    release_date VARCHAR(32) NULL,
+    release_date VARCHAR(24) NULL,
     image VARCHAR(250) NULL,
     category VARCHAR(16) NULL,
     content LONGTEXT NULL,
-    content_type CHAR(4),
-    page_id char(10) NOT NULL,
-    -- INDEX (page_id),
-    -- FOREIGN KEY (page_id) REFERENCES pages (id),
+    content_type CHAR(4) NULL,
+    page_id char(10) NULL,
+    status char(10) NOT NULL,
     PRIMARY KEY(id)  
+);
+
+CREATE TABLE IF NOT EXISTS esg.tokens(
+    email VARCHAR(250) NOT NULL PRIMARY KEY,
+    token LONGTEXT NOT NULL,
+    status CHAR(7) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
 );

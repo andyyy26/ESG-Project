@@ -45,8 +45,7 @@ exports.saveForm = async (req, res) => {
     });
   } catch (err) {
     res.status(500).send({
-      message:
-        err.message || CREATED_ERROR + "form."
+      message: CREATED_ERROR + "form." + ` Error: ${err}`
     });
   }
 };
@@ -80,7 +79,7 @@ exports.getProfile = async (req, res) => {
 exports.getPosts = async (req, res) => {
   const { page_id, limit, offset } = req.query;
   try {
-    const condition = `page_id = '${page_id}' LIMIT ${offset},${limit}`;
+    const condition = `page_id = '${page_id}' AND status='PUBLISH' LIMIT ${offset},${limit}`;
     const profile = await Post.getByCondtion(condition);
     res.send(profile);
   } catch (err) {
@@ -94,7 +93,7 @@ exports.getPosts = async (req, res) => {
 exports.searchPosts = async (req, res) => {
   const { query, limit, offset } = req.body;
   try {
-    const condition = `content like '%${query}%' LIMIT ${offset},${limit}`;
+    const condition = `CONCAT_WS(content, title) like '%${query}%' AND status='PUBLISH' LIMIT ${offset},${limit}`;
     const profile = await Post.getByCondtion(condition);
     res.send(profile);
   } catch (err) {

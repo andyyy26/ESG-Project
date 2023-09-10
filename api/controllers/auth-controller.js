@@ -10,8 +10,23 @@ const {
 } = require('../../middlewares/shared/validators');
 const { sendEmail } = require('../../middlewares/utils/email-service');
 const User = require('../models/user-model');
+const Token = require('../models/token-model');
 const UserInfo = require('../models/user-info-model');
 
+const userEnum = {
+  ADMIN: "Admin",
+  USER: "User"
+}
+
+const webEnum = {
+  WEB: "WEB",
+  CMS: "CMS"
+}
+
+const tokenEnum = {
+  VALID: "Valid",
+  INVALID: "Invalid"
+}
 /**
  * Logs in
  * POST:
@@ -22,8 +37,8 @@ const UserInfo = require('../models/user-info-model');
  * }
  */
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
+  const { email, password, type } = req.body;
+  if (!email || !password || !type) {
     res.status(400).json({
       success: false,
       message: 'Please fill in all fields!',
@@ -41,6 +56,14 @@ exports.login = async (req, res) => {
           data: null,
         });
       } else {
+        if (user.role === userEnum.USER && type === webEnum.CMS) {
+          res.status(401).json({
+            success: false,
+            message: 'Access denied!!!',
+            data: null,
+          });
+        }
+
         const pwCheckSuccess = await bcrypt.compare(password, user.password);
         if (!pwCheckSuccess) {
           res.status(400).json({
@@ -57,6 +80,10 @@ exports.login = async (req, res) => {
               expiresIn: process.env.EXPIRES_IN,
             }
           );
+          const data = `token='${token}', status='${tokenEnum.VALID}'`;
+          const condition = `email='${email}'`;
+          await Token.update(data, condition);
+
           res.cookie('session', token, {
             expiresIn: process.env.EXPIRES_IN,
           });
@@ -69,7 +96,7 @@ exports.login = async (req, res) => {
           });
         }
       }
-    } catch(err) {
+    } catch (err) {
       res.status(400).json({
         success: false,
         message: `Something went wrong. ${err}`,
@@ -136,7 +163,8 @@ exports.register = async (req, res) => {
         first_name: first_name ? first_name : '',
         last_name: last_name ? last_name : '',
         email: email,
-        password: bcrypt.hashSync(password, 14)
+        password: bcrypt.hashSync(password, 14),
+        role: userEnum.USER
       });
       const user = await User.create(newUser);
       const token = jwt.sign(
@@ -146,6 +174,12 @@ exports.register = async (req, res) => {
           expiresIn: process.env.EXPIRES_IN,
         }
       );
+      authToken = new Token({
+        email: email,
+        token: token,
+        status: tokenEnum.VALID
+      })
+      await Token.create(authToken);
 
       const secretCode = cryptoRandomString({
         length: 6,
@@ -163,7 +197,7 @@ exports.register = async (req, res) => {
         message: 'User created',
         data: { user: user }
       });
-    } catch(err) {
+    } catch (err) {
       res.status(400).json({
         success: false,
         message: `Something went wrong. ${err}`,
@@ -294,11 +328,11 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-exports.validateToken = async(req, res) => {
+exports.validateToken = async (req, res) => {
   const { token } = req.query;
   const decodeToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-  const expireTimeInMilliseconds = decodeToken.exp * 1000; 
-  if(expireTimeInMilliseconds >  Date.now()) {
+  const expireTimeInMilliseconds = decodeToken.exp * 1000;
+  if (expireTimeInMilliseconds > Date.now()) {
     res.status(200).json({
       success: true,
       message: 'Valid token!!!',
@@ -314,14 +348,24 @@ exports.validateToken = async(req, res) => {
 };
 
 exports.logout = async (req, res) => {
-  try {
-    res.setHeader('Clear-Site-Data', '"cookies", "storage"');
-    res.status(200).json({ status: 'success', message: 'You are logged out!' });
-  } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      message: 'Internal Server Error',
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: 'Missing email!!!',
     });
   }
-  res.end();
+
+  const data = `status='${tokenEnum.INVALID}'`;
+  const condition = `email='${email}'`;
+  Token.update(data, condition)
+    .then(() => {
+      res.status(200).json({ status: 'success', message: 'You are logged out!' });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        status: 'error',
+        message: `Internal Server Error ${err}`,
+      });
+    });
 }

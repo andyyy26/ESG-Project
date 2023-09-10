@@ -1,20 +1,21 @@
 'use strict';
 module.exports = (app) => {
   const website = require('../controllers/website-controller');
+  const validation = require('../../middlewares/shared/token')
 
   app
   .route('/api/v1/profile')
-  .get(website.getProfile)
+  .get(validation.validateToken, website.getProfile)
 
   app
   .route('/api/v1/posts')
-  .get(website.getPosts)
+  .get(validation.validateToken, website.getPosts)
   
   app
   .route('/api/v1/save_form')
-  .post(website.saveForm);
+  .post(validation.validateToken, website.saveForm);
 
   app
   .route('/api/v1/search')
-  .post(website.searchPosts);
+  .post(validation.validateToken, website.searchPosts);
 };

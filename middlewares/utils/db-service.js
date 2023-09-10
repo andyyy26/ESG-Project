@@ -4,12 +4,28 @@ async function create(data, table) {
     return new Promise((resolve, reject) => {
         sql.query(`INSERT INTO ${table} SET ?`, data, (err, res) => {
             if (err) {
-                console.log(`Created ${table} error: `, err);
+                console.log(`Create ${table} error: `, err);
                 return reject(err);
             }
 
             console.log("Created: ", { id: res.insertId, ...data });
             return resolve({ id: res.insertId, ...data });
+        });
+    });
+}
+
+async function update(data, condition, table) {
+    console.log(data, condition);
+    return new Promise((resolve, reject) => {
+        sql.query(`UPDATE ${table} SET ${data} WHERE ${condition}`, (err, res) => {
+            console.log(JSON.stringify(res));
+            if (err) {
+                console.log(`Update ${table} error: `, err);
+                return reject(err);
+            }
+
+            console.log("Updated: ", { res: res, ...data });
+            return resolve({ res: res, ...data });
         });
     });
 }
@@ -130,6 +146,7 @@ async function removeAll(table) {
 
 module.exports = {
     create,
+    update,
     findById,
     getAll,
     getByCondtion,

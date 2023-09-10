@@ -22,7 +22,7 @@ const validatePassword = (password) => {
   return false;
 };
 
-const checkEmailExists = (email) => {
+const checkEmailExists = async (email) => {
   const condition = `email='${email}'`;
   return User.getByCondtion(condition).then((result) => {
     if (result && result.length > 0) {

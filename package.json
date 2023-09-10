@@ -38,6 +38,7 @@
     "googleapis": "^126.0.1",
     "googlephotos": "^0.3.5",
     "helmet": "^4.4.0",
+    "http": "^0.0.1-security",
     "i": "^0.3.7",
     "jest": "^26.4.2",
     "jsonwebtoken": "^9.0.2",
