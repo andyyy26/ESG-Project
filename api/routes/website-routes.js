@@ -9,7 +9,7 @@ module.exports = (app) => {
 
   app
   .route('/api/v1/posts')
-  .get(validation.validateToken, website.getPosts)
+  .get(website.getPosts)
   
   app
   .route('/api/v1/save_form')
@@ -17,5 +17,5 @@ module.exports = (app) => {
 
   app
   .route('/api/v1/search')
-  .post(validation.validateToken, website.searchPosts);
+  .post(website.searchPosts);
 };
