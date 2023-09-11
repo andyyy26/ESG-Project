@@ -10,6 +10,10 @@ module.exports = (app) => {
   app
   .route('/api/v1/posts')
   .get(website.getPosts)
+
+  app
+  .route('/api/v1/post_detail')
+  .get(website.getDetailPosts)
   
   app
   .route('/api/v1/save_form')

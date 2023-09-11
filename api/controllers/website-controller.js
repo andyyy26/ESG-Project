@@ -90,6 +90,20 @@ exports.getPosts = async (req, res) => {
   }
 };
 
+exports.getDetailPosts = async (req, res) => {
+  const { id } = req.query;
+  try {
+    const condition = `id='${id}'`;
+    const profile = await Post.getByCondtion(condition);
+    res.send(profile.pop());
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || RETRIEVE_ERROR + "posts."
+    });
+  }
+};
+
 exports.searchPosts = async (req, res) => {
   const { query, limit, offset } = req.body;
   try {
