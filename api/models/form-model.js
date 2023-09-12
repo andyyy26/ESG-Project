@@ -25,7 +25,7 @@ const {
   
   Form.getAll = async() => await getAll(TABLE);
 
-  Form.getAllByFields = async() => await getAllByFields(fields, TABLE);
+  Form.getAllByFields = async(fields) => await getAllByFields(fields, TABLE);
   
   Form.getByCondtion = async(condition) => await getByCondtion(condition, TABLE);
 

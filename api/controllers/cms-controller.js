@@ -140,24 +140,24 @@ exports.getFormData = async (req, res) => {
   let formData;
   const fields = "id, form_id, data"
   try {
-  const { limit, offset, additional_params } = req.body;
-  if(!additional_params) {
-    formData = await Form.getAllByFields(fields);
-    return res.status(200).json({
-      message: "success",
-      data: { 
-        total: formData.length,
-        page: offset / limit + 1,
-        results: formData
-      }
-    });
-  }
-  const { form_id } = additional_params;
+    const { limit, offset, additional_params } = req.body;
+    if (!additional_params) {
+      formData = await Form.getAllByFields(fields);
+      return res.status(200).json({
+        message: "success",
+        data: {
+          total: formData.length,
+          page: offset / limit + 1,
+          results: formData
+        }
+      });
+    }
+    const { form_id } = additional_params;
 
-  console.log(form_id)
-  if (form_id) {
-    availableFiedls.form_id = form_id.trim();
-  }
+    console.log(form_id)
+    if (form_id) {
+      availableFiedls.form_id = form_id.trim();
+    }
 
     let condition = "";
     const keys = Object.keys(availableFiedls)
@@ -178,7 +178,7 @@ exports.getFormData = async (req, res) => {
     formData = await Form.getFieldsByCondition(fields, finalCondition);
     res.status(200).json({
       message: "success",
-      data: { 
+      data: {
         total: formData.length,
         page: offset / limit + 1,
         results: formData
@@ -225,11 +225,11 @@ exports.createPost = async (req, res) => {
         });
       }
 
-      const conditionWithoutPageId = !additional_params.title || !additional_params.content || !additional_params.content_type || 
-                                     !additional_params.category || !additional_params.image || !additional_params.release_date || !additional_params.source;
+      const conditionWithoutPageId = !additional_params.title || !additional_params.content || !additional_params.content_type ||
+        !additional_params.category || !additional_params.image || !additional_params.release_date || !additional_params.source;
 
-      const conditionWithPageId = !additional_params.content || !additional_params.content_type || 
-                                  !additional_params.category || !additional_params.image;
+      const conditionWithPageId = !additional_params.content || !additional_params.content_type ||
+        !additional_params.category || !additional_params.image;
 
       if (additional_params.page_id === pageEnum.ESG) {
         if (conditionWithPageId) {
