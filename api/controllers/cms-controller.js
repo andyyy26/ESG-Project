@@ -1,4 +1,5 @@
 const { uploadFile } = require('../../middlewares/utils/file-uploader-service');
+const _ = require("lodash");
 const {
   UPLOAD_IMAGE_SUCCESS,
   UPLOAD_FILE_SUCCESS,
@@ -68,8 +69,8 @@ exports.getPosts = async (req, res) => {
   const { limit, offset, additional_params } = req.body;
 
   try {
-    if (!additional_params) {
-      postData = await Post.getAllByFields(fields);
+    if (_.isEmpty(additional_params)) {
+      postData = await Post.getAll();
       return res.status(200).json({
         message: "success",
         data: {
@@ -162,7 +163,7 @@ exports.getFormData = async (req, res) => {
   const fields = "id, form_id, data"
   try {
     const { limit, offset, additional_params } = req.body;
-    if (!additional_params) {
+    if (_.isEmpty(additional_params)) {
       formData = await Form.getAllByFields(fields);
       return res.status(200).json({
         message: "success",
