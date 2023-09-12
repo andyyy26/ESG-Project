@@ -62,6 +62,21 @@ async function getAll(table) {
     });
 }
 
+async function getAllByFields(fields, table) {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT ${fields} FROM ${table}`;
+        sql.query(query, (err, res) => {
+            if (err) {
+                console.log(`getAll ${table} error: `, err);
+                return reject(err);
+            }
+
+            console.log("Data: ", res);
+            return resolve(res);
+        });
+    });
+}
+
 async function getByCondtion(condition, table) {
     return new Promise((resolve, reject) => {
         sql.query(`SELECT * FROM ${table} WHERE ${condition}`, (err, res) => {
@@ -149,6 +164,7 @@ module.exports = {
     update,
     findById,
     getAll,
+    getAllByFields,
     getByCondtion,
     getFieldsByCondition,
     updateByCondition,

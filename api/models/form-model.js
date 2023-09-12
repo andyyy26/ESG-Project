@@ -1,6 +1,7 @@
 const {
     create,
     getAll,
+    getAllByFields,
     findById,
     getByCondtion,
     getFieldsByCondition,
@@ -23,6 +24,8 @@ const {
   Form.findById = async(id) => await findById(id, TABLE);
   
   Form.getAll = async() => await getAll(TABLE);
+
+  Form.getAllByFields = async() => await getAllByFields(fields, TABLE);
   
   Form.getByCondtion = async(condition) => await getByCondtion(condition, TABLE);
 

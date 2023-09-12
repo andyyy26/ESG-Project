@@ -138,10 +138,11 @@ exports.getPosts = async (req, res) => {
 exports.getFormData = async (req, res) => {
   let availableFiedls = {};
   let formData;
+  const fields = "id, form_id, data"
   try {
   const { limit, offset, additional_params } = req.body;
   if(!additional_params) {
-    formData = await Form.getAll();
+    formData = await Form.getAllByFields(fields);
     return res.status(200).json({
       message: "success",
       data: { 
@@ -174,7 +175,6 @@ exports.getFormData = async (req, res) => {
     });
 
     const finalCondition = conditions.join(" ") + ` LIMIT ${offset},${limit}`;
-    const fields = "id, form_id, data"
     formData = await Form.getFieldsByCondition(fields, finalCondition);
     res.status(200).json({
       message: "success",
