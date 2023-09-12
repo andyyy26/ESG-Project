@@ -22,4 +22,16 @@ module.exports = (app) => {
   app
     .route('/api/v1/cms/create_post')
     .post(validation.validateToken, cms.createPost);
+
+  app
+    .route('/api/v1/cms/update_post')
+    .patch(validation.validateToken, cms.updatePost);
+
+  app
+    .route('/api/v1/cms/update_esg')
+    .patch(validation.validateToken, cms.updateESG);
+
+  app
+    .route('/api/v1/cms/delete_post')
+    .delete(validation.validateToken, cms.deletePost);
 };

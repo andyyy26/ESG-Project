@@ -120,8 +120,8 @@ async function updateByCondition(data, condition, table) {
                     return resolve({ kind: "not_found" });
                 }
 
-                console.log(`Updated ${table}: `, { id: data.id, ...data });
-                return resolve({ id: data.id, ...data });
+                console.log(`Updated ${table}: `, { ...data });
+                return resolve({ ...data });
             }
         );
     });

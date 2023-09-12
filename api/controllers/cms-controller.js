@@ -7,6 +7,15 @@ const {
 } = require('../../middlewares/constant/const');
 const Post = require("../models/post-model");
 const Form = require("../models/form-model");
+const {
+  allPostCondition,
+  customPostCondition
+} = require('../../middlewares/shared/validators');
+const { 
+  CREATED_ERROR,
+  RETRIEVE_ERROR,
+  UPDATED_ERROR
+ } = require('../../middlewares/constant/const');
 
 const fieldEnum = {
   QUERY: "query",
@@ -221,11 +230,19 @@ exports.getFormData = async (req, res) => {
 exports.createPost = async (req, res) => {
   const { status, additional_params } = req.body;
 
-  if (!additional_params || !status) {
+  if (!status || !additional_params) {
     return res.status(400).send({
       success: false,
       message: "Missing params!!!",
       data: { status, additional_params }
+    });
+  }
+
+  if (status !== postEnum.DRAFT && allPostCondition(additional_params)) {
+    return res.status(400).json({
+      success: false,
+      message: `Please provide all required fields for post`,
+      data: { status, additional_params },
     });
   }
 
@@ -242,40 +259,6 @@ exports.createPost = async (req, res) => {
       status
     };
 
-    if (status !== postEnum.DRAFT) {
-      if (!additional_params.page_id) {
-        return res.status(400).json({
-          success: false,
-          message: 'Please provide page ID',
-          data: { status, additional_params },
-        });
-      }
-
-      const conditionWithoutPageId = !additional_params.title || !additional_params.content || !additional_params.content_type ||
-        !additional_params.category || !additional_params.image || !additional_params.release_date || !additional_params.source;
-
-      const conditionWithPageId = !additional_params.content || !additional_params.content_type ||
-        !additional_params.category || !additional_params.image;
-
-      if (additional_params.page_id === pageEnum.ESG) {
-        if (conditionWithPageId) {
-          return res.status(400).json({
-            success: false,
-            message: `Please provide all required fields for ${additional_params.page_id} page`,
-            data: { status, additional_params },
-          });
-        }
-      } else {
-        if (conditionWithoutPageId) {
-          return res.status(400).json({
-            success: false,
-            message: `Please provide all required fields for ${additional_params.page_id} page`,
-            data: { status, additional_params },
-          });
-        }
-      }
-    }
-
     const results = await Post.create(postData);
     res.status(200).json({
       success: true,
@@ -285,8 +268,121 @@ exports.createPost = async (req, res) => {
   } catch (err) {
     res.status(500).send({
       success: false,
-      message: err.message || RETRIEVE_ERROR + "form data.",
+      message: err.message || CREATED_ERROR + "form data.",
       data: { status, additional_params }
+    });
+  }
+};
+
+exports.updatePost = async (req, res) => {
+  const { id, status, additional_params } = req.body;
+
+  if (!id || !status || !additional_params) {
+    return res.status(400).send({
+      success: false,
+      message: "Missing params!!!",
+      data: { id, status, additional_params }
+    });
+  }
+
+  const updatedData = {
+    id: id,
+    page_id: additional_params.page_id || "",
+    source: additional_params.source || "",
+    title: additional_params.title || "",
+    image: additional_params.image || "",
+    release_date: additional_params.release_date || "",
+    category: additional_params.category || "",
+    content: additional_params.content || "",
+    content_type: additional_params.content_type || "",
+    status
+  };
+
+  try {
+    if (status !== postEnum.DRAFT && allPostCondition(additional_params)) {
+      return res.status(400).json({
+        success: false,
+        message: `Please provide all required fields for post`,
+        data: { status, additional_params },
+      });
+    }
+
+    const updatedCondition = `page_id = ?, source = ?, title = ?, image = ?, release_date = ?, category = ?, content = ?, content_type = ?, status = ? WHERE id = ?`
+    await Post.updateByCondition(
+      updatedCondition,
+      [updatedData.page_id, updatedData.source, updatedData.title,
+      updatedData.image, updatedData.release_date, updatedData.category,
+      updatedData.content, updatedData.content_type, updatedData.status, id]
+    );
+    res.status(200).json({
+      success: true,
+      message: 'Updated post successfully',
+      data: updatedData
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err.message || UPDATED_ERROR + "post.",
+      data: { status, additional_params }
+    });
+  }
+};
+
+exports.updateESG = async (req, res) => {
+  const { id, status, content } = req.body;
+
+  if (!id || !status || !content) {
+    return res.status(400).send({
+      success: false,
+      message: "Missing params!!!",
+      data: { id, status, content }
+    });
+  }
+
+  try {
+    const updatedCondition = `content = ? WHERE id = ?`
+    await Post.updateByCondition(
+      updatedCondition,
+      [content, id]
+    );
+    res.status(200).json({
+      success: true,
+      message: 'Updated ESG successfully',
+      data: { id: id, status: status, content: content }
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err.message || UPDATED_ERROR + "ESG.",
+      data: { id, status, content }
+    });
+  }
+};
+
+exports.deletePost = async (req, res) => {
+  const { id } = req.query;
+
+  if (!id) {
+    return res.status(400).send({
+      success: false,
+      message: "Missing id!!!",
+      data: { id }
+    });
+  }
+
+  try {
+    const deletedCondition = `id = ${id}`
+    const results = await Post.remove(deletedCondition);
+    res.status(200).json({
+      success: true,
+      message: `Deleted post ${id} successfully`,
+      data: results
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err.message,
+      data: {id }
     });
   }
 };

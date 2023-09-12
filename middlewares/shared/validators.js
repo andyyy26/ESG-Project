@@ -44,9 +44,20 @@ const checkUserExists = async (name) => {
   });
 };
 
+const allPostCondition = (additional_params) => {
+  return !additional_params.page_id || !additional_params.title || !additional_params.content || !additional_params.content_type ||
+         !additional_params.category || !additional_params.image || !additional_params.release_date || !additional_params.source;
+};
+
+const customPostCondition =  (additional_params) => {
+  return !additional_params.page_id || !additional_params.content || !additional_params.category;
+};
+
 module.exports = {
   validateEmail,
   validatePassword,
   checkEmailExists,
   checkUserExists,
+  allPostCondition,
+  customPostCondition
 };

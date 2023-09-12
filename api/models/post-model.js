@@ -35,9 +35,9 @@ const {
 
   Post.getFieldsByCondition = async(fields, condition) => await getFieldsByCondition(fields, condition, TABLE);
   
-  Post.updateByCondition = async(condition) => {
+  Post.updateByCondition = async(condition, data) => {
     const query = `UPDATE ${TABLE} SET ${condition}`;
-    await updateByCondition(query, TABLE);
+    await updateByCondition(data, query, TABLE);
   }
   
   Post.remove = async(condition) => await remove(condition, TABLE);
