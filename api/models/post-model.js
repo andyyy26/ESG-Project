@@ -1,7 +1,7 @@
 const {
     create,
     getAll,
-    getAllByFields,
+    getByLimit,
     findById,
     getByCondtion,
     updateByCondition,
@@ -29,7 +29,7 @@ const {
   
   Post.getAll = async() => await getAll(TABLE);
 
-  Post.getAllByFields = async(fields) => await getAllByFields(fields, TABLE);
+  Post.getByLimit = async(fields, limit) => await getByLimit(fields, limit, TABLE);
   
   Post.getByCondtion = async(condition) => await getByCondtion(condition, TABLE);
 

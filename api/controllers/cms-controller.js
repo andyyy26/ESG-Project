@@ -67,10 +67,11 @@ exports.getPosts = async (req, res) => {
   let availableFiedls = {};
   let postData;
   const { limit, offset, additional_params } = req.body;
+  const limitCondition = `LIMIT ${offset},${limit}`;
 
   try {
     if (_.isEmpty(additional_params)) {
-      postData = await Post.getAll();
+      postData = await Post.getByLimit('*', limitCondition);
       return res.status(200).json({
         message: "success",
         data: {
@@ -139,7 +140,7 @@ exports.getPosts = async (req, res) => {
       return condition;
     });
 
-    const finalCondition = conditions.join(" ") + ` LIMIT ${offset},${limit}`;
+    const finalCondition = conditions.join(" ") + ` ${limitCondition}`;
     postData = await Post.getByCondtion(finalCondition);
     res.status(200).json({
       message: "success",
@@ -161,10 +162,13 @@ exports.getFormData = async (req, res) => {
   let availableFiedls = {};
   let formData;
   const fields = "id, form_id, data"
+
   try {
     const { limit, offset, additional_params } = req.body;
+    const limitCondition = `LIMIT ${offset},${limit}`;
+
     if (_.isEmpty(additional_params)) {
-      formData = await Form.getAllByFields(fields);
+      formData = await Form.getByLimit(fields, limitCondition);
       return res.status(200).json({
         message: "success",
         data: {
@@ -196,7 +200,7 @@ exports.getFormData = async (req, res) => {
       return condition;
     });
 
-    const finalCondition = conditions.join(" ") + ` LIMIT ${offset},${limit}`;
+    const finalCondition = conditions.join(" ") + ` ${limitCondition}`;
     formData = await Form.getFieldsByCondition(fields, finalCondition);
     res.status(200).json({
       message: "success",

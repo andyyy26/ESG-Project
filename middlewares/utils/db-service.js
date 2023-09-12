@@ -62,9 +62,9 @@ async function getAll(table) {
     });
 }
 
-async function getAllByFields(fields, table) {
+async function getByLimit(fields, limit, table) {
     return new Promise((resolve, reject) => {
-        const query = `SELECT ${fields} FROM ${table}`;
+        const query = `SELECT ${fields} FROM ${table} ${limit}`;
         sql.query(query, (err, res) => {
             if (err) {
                 console.log(`getAll ${table} error: `, err);
@@ -164,7 +164,7 @@ module.exports = {
     update,
     findById,
     getAll,
-    getAllByFields,
+    getByLimit,
     getByCondtion,
     getFieldsByCondition,
     updateByCondition,
