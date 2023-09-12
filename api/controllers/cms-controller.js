@@ -64,38 +64,52 @@ exports.uploadFile = async (req, res) => {
 
 exports.getPosts = async (req, res) => {
   let availableFiedls = {};
+  let postData;
   const { limit, offset, additional_params } = req.body;
-  const { query, source, category, content_type, page_id, status, start_date, end_date } = additional_params;
-
-  if (query) {
-    availableFiedls.query = query.trim();
-  }
-
-  if (source) {
-    availableFiedls.source = source.trim();
-  }
-
-  if (category) {
-    availableFiedls.category = category.trim();
-  }
-
-  if (content_type) {
-    availableFiedls.content_type = content_type.trim();
-  }
-
-  if (page_id) {
-    availableFiedls.page_id = page_id.trim();
-  }
-
-  if (status) {
-    availableFiedls.status = status.trim();
-  }
-
-  if (start_date && end_date) {
-    availableFiedls.time_range = `'${start_date.trim()}' AND '${end_date.trim()}'`;
-  }
 
   try {
+    if (!additional_params) {
+      postData = await Post.getAllByFields(fields);
+      return res.status(200).json({
+        message: "success",
+        data: {
+          total: postData.length,
+          page: offset / limit + 1,
+          results: postData
+        }
+      });
+    }
+
+    const { query, source, category, content_type, page_id, status, start_date, end_date } = additional_params;
+
+    if (query) {
+      availableFiedls.query = query.trim();
+    }
+
+    if (source) {
+      availableFiedls.source = source.trim();
+    }
+
+    if (category) {
+      availableFiedls.category = category.trim();
+    }
+
+    if (content_type) {
+      availableFiedls.content_type = content_type.trim();
+    }
+
+    if (page_id) {
+      availableFiedls.page_id = page_id.trim();
+    }
+
+    if (status) {
+      availableFiedls.status = status.trim();
+    }
+
+    if (start_date && end_date) {
+      availableFiedls.time_range = `'${start_date.trim()}' AND '${end_date.trim()}'`;
+    }
+
     let condition = "";
     const keys = Object.keys(availableFiedls)
     const conditions = keys.map(key => {
@@ -125,8 +139,15 @@ exports.getPosts = async (req, res) => {
     });
 
     const finalCondition = conditions.join(" ") + ` LIMIT ${offset},${limit}`;
-    const profile = await Post.getByCondtion(finalCondition);
-    res.send(profile);
+    postData = await Post.getByCondtion(finalCondition);
+    res.status(200).json({
+      message: "success",
+      data: {
+        total: postData.length,
+        page: offset / limit + 1,
+        results: postData
+      }
+    });
   } catch (err) {
     res.status(500).send({
       message:

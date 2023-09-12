@@ -1,6 +1,7 @@
 const {
     create,
     getAll,
+    getAllByFields,
     findById,
     getByCondtion,
     updateByCondition,
@@ -27,6 +28,8 @@ const {
   Post.findById = async(id) => await findById(id, TABLE);
   
   Post.getAll = async() => await getAll(TABLE);
+
+  Post.getAllByFields = async(fields) => await getAllByFields(fields, TABLE);
   
   Post.getByCondtion = async(condition) => await getByCondtion(condition, TABLE);
 
