@@ -136,19 +136,54 @@ exports.getPosts = async (req, res) => {
 };
 
 exports.getFormData = async (req, res) => {
-  let condition = "";
+  let availableFiedls = {};
+  let formData;
+  try {
   const { limit, offset, additional_params } = req.body;
+  if(!additional_params) {
+    formData = await Form.getAll();
+    return res.status(200).json({
+      message: "success",
+      data: { 
+        total: formData.length,
+        page: offset / limit + 1,
+        results: formData
+      }
+    });
+  }
   const { form_id } = additional_params;
 
   console.log(form_id)
   if (form_id) {
-    condition += `form_id = '${form_id}'`;
+    availableFiedls.form_id = form_id.trim();
   }
 
-  try {
-    const finalCondition = condition + ` LIMIT ${offset},${limit}`;
-    const profile = await Form.getByCondtion(finalCondition);
-    res.send(profile);
+    let condition = "";
+    const keys = Object.keys(availableFiedls)
+    const conditions = keys.map(key => {
+      console.log(key);
+      switch (key) {
+        default:
+          condition = `${key}='${availableFiedls[key]}'`;
+      }
+
+      if (keys.indexOf(key) !== keys.length - 1) {
+        condition += " AND";
+      }
+      return condition;
+    });
+
+    const finalCondition = conditions.join(" ") + ` LIMIT ${offset},${limit}`;
+    const fields = "id, form_id, data"
+    formData = await Form.getFieldsByCondition(fields, finalCondition);
+    res.status(200).json({
+      message: "success",
+      data: { 
+        total: formData.length,
+        page: offset / limit + 1,
+        results: formData
+      }
+    });
   } catch (err) {
     res.status(500).send({
       message:
