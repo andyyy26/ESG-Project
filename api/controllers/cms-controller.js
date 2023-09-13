@@ -76,17 +76,16 @@ exports.getPosts = async (req, res) => {
   let availableFiedls = {};
   let postData;
   const { limit, offset, additional_params } = req.body;
-  const limitCondition = `LIMIT ${offset},${limit}`;
 
   try {
     if (_.isEmpty(additional_params)) {
-      postData = await Post.getByLimit('*', limitCondition);
+      postData = await Post.getAll();
       return res.status(200).json({
         message: "success",
         data: {
           total: postData.length,
           page: offset / limit + 1,
-          results: postData
+          results: postData.slice(offset, limit)
         }
       });
     }
@@ -149,14 +148,14 @@ exports.getPosts = async (req, res) => {
       return condition;
     });
 
-    const finalCondition = conditions.join(" ") + ` ${limitCondition}`;
+    const finalCondition = conditions.join(" ");
     postData = await Post.getByCondtion(finalCondition);
     res.status(200).json({
       message: "success",
       data: {
         total: postData.length,
         page: offset / limit + 1,
-        results: postData
+        results: postData.slice(offset, limit)
       }
     });
   } catch (err) {
@@ -174,16 +173,14 @@ exports.getFormData = async (req, res) => {
 
   try {
     const { limit, offset, additional_params } = req.body;
-    const limitCondition = `LIMIT ${offset},${limit}`;
-
     if (_.isEmpty(additional_params)) {
-      formData = await Form.getByLimit(fields, limitCondition);
+      formData = await Form.getByFields(fields);
       return res.status(200).json({
         message: "success",
         data: {
           total: formData.length,
           page: offset / limit + 1,
-          results: formData
+          results: formData.slice(offset, limit)
         }
       });
     }
@@ -209,14 +206,14 @@ exports.getFormData = async (req, res) => {
       return condition;
     });
 
-    const finalCondition = conditions.join(" ") + ` ${limitCondition}`;
+    const finalCondition = conditions.join(" ");
     formData = await Form.getFieldsByCondition(fields, finalCondition);
     res.status(200).json({
       message: "success",
       data: {
         total: formData.length,
         page: offset / limit + 1,
-        results: formData
+        results: formData.slice(offset, limit)
       }
     });
   } catch (err) {

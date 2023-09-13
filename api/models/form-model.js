@@ -2,6 +2,7 @@ const {
     create,
     getAll,
     getByLimit,
+    getByFields,
     findById,
     getByCondtion,
     getFieldsByCondition,
@@ -28,6 +29,8 @@ const {
   Form.getByLimit = async(fields, limit) => await getByLimit(fields, limit, TABLE);
   
   Form.getByCondtion = async(condition) => await getByCondtion(condition, TABLE);
+
+  Form.getByFields = async(fields) => await getByFields(fields, TABLE);
 
   Form.getFieldsByCondition = async(fields, condition) => await getFieldsByCondition(fields, condition, TABLE);
   

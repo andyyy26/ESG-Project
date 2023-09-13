@@ -105,6 +105,20 @@ async function getFieldsByCondition(fields, condition, table) {
     });
 }
 
+async function getByFields(fields, table) {
+    return new Promise((resolve, reject) => {
+        sql.query(`SELECT ${fields} FROM ${table}`, (err, res) => {
+            if (err) {
+                console.log(`getByFields ${table} error: `, err);
+                return reject(err);
+            }
+
+            console.log("Data: ", res);
+            return resolve(res);
+        });
+    });
+}
+
 async function updateByCondition(data, condition, table) {
     return new Promise((resolve, reject) => {
         sql.query(
@@ -166,6 +180,7 @@ module.exports = {
     getAll,
     getByLimit,
     getByCondtion,
+    getByFields,
     getFieldsByCondition,
     updateByCondition,
     remove,
