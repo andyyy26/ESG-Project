@@ -34,4 +34,12 @@ module.exports = (app) => {
   app
     .route('/api/v1/cms/delete_post')
     .delete(validation.validateToken, cms.deletePost);
+
+   app
+    .route('/api/v1/cms/post_detail')
+    .get(validation.validateToken, cms.getPostDetail)
+
+  app
+    .route('/api/v1/cms/form_detail')
+    .get(validation.validateToken, cms.getFormDataDetail)
 };

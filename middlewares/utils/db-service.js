@@ -79,6 +79,7 @@ async function getByLimit(fields, limit, table) {
 
 async function getByCondtion(condition, table) {
     return new Promise((resolve, reject) => {
+        console.log(`SELECT * FROM ${table} WHERE ${condition}`)
         sql.query(`SELECT * FROM ${table} WHERE ${condition}`, (err, res) => {
             if (err) {
                 console.log(`getByCondtion ${table} error: `, err);
@@ -118,6 +119,25 @@ async function getByFields(fields, table) {
         });
     });
 }
+
+async function getAndUnion(column, fields, values, limit, offset, table) {
+    return new Promise((resolve, reject) => {
+        sql.query(`
+        (SELECT ${fields} FROM ${table} WHERE ${column} = '${values.EVENT}' LIMIT ${offset},${limit})
+         UNION ALL
+        (SELECT ${fields} FROM ${table} WHERE ${column} = '${values.NEWS}' LIMIT ${offset},${limit})
+        `, (err, res) => {
+            if (err) {
+                console.log(`getAndUnion ${table} error: `, err);
+                return reject(err);
+            }
+
+            console.log("Data: ", res);
+            return resolve(res);
+        });
+    });
+}
+
 
 async function updateByCondition(data, condition, table) {
     return new Promise((resolve, reject) => {
@@ -182,6 +202,7 @@ module.exports = {
     getByCondtion,
     getByFields,
     getFieldsByCondition,
+    getAndUnion,
     updateByCondition,
     remove,
     removeAll

@@ -8,35 +8,19 @@ const {
 const Post = require("../models/post-model");
 const Form = require("../models/form-model");
 const {
-  allPostCondition,
-  customPostCondition
+  allPostCondition
 } = require('../../middlewares/shared/validators');
 const { 
   CREATED_ERROR,
   RETRIEVE_ERROR,
   UPDATED_ERROR
  } = require('../../middlewares/constant/const');
-
-const fieldEnum = {
-  QUERY: "query",
-  SOURCE: "source",
-  CATEGORY: "category",
-  CONTENT_TYPE: "content_type",
-  TIME_RANGE: "time_range",
-  PAGE_ID: "page_id",
-  STATUS: "status"
-}
-
-const postEnum = {
-  PUBLISH: "PUBLISH",
-  DRAFT: "DRAFT"
-}
-
-const pageEnum = {
-  LIB: "LIB",
-  ACTIVITIES: "ATV",
-  ESG: "ESG"
-}
+ const {
+  pageEnum,
+  postColumnEnum,
+  inputFieldEnum,
+  statusEnum
+} = require("../../middlewares/utils/enum");
 
 /**
  * Upload image to Google Drive
@@ -71,15 +55,15 @@ exports.uploadFile = async (req, res) => {
       });
     })
 };
-
 exports.getPosts = async (req, res) => {
   let availableFiedls = {};
   let postData;
   const { limit, offset, additional_params } = req.body;
-
+  const fields = "*"
+  const group = `GROUP BY 'release_date'`
   try {
     if (_.isEmpty(additional_params)) {
-      postData = await Post.getAll();
+      postData = await Post.getByLimit(fields, group);
       return res.status(200).json({
         message: "success",
         data: {
@@ -125,17 +109,17 @@ exports.getPosts = async (req, res) => {
     const conditions = keys.map(key => {
       console.log(key);
       switch (key) {
-        case fieldEnum.QUERY:
+        case inputFieldEnum.QUERY:
           condition = `CONCAT_WS(content, title) like '%${availableFiedls[key]}%'`;
           break;
-        case fieldEnum.TIME_RANGE:
+        case inputFieldEnum.TIME_RANGE:
           condition = `release_date BETWEEN ${availableFiedls[key]}`;
           break;
-        case fieldEnum.CATEGORY:
-        case fieldEnum.CONTENT_TYPE:
-        case fieldEnum.PAGE_ID:
-        case fieldEnum.SOURCE:
-        case fieldEnum.STATUS:
+        case inputFieldEnum.CATEGORY:
+        case inputFieldEnum.CONTENT_TYPE:
+        case inputFieldEnum.PAGE_ID:
+        case inputFieldEnum.SOURCE:
+        case inputFieldEnum.STATUS:
           condition = `${key}='${availableFiedls[key]}'`;
           break;
         default:
@@ -148,7 +132,7 @@ exports.getPosts = async (req, res) => {
       return condition;
     });
 
-    const finalCondition = conditions.join(" ");
+    const finalCondition = conditions.join(" ") + ` ${group}`;
     postData = await Post.getByCondtion(finalCondition);
     res.status(200).json({
       message: "success",
@@ -235,7 +219,7 @@ exports.createPost = async (req, res) => {
     });
   }
 
-  if (status !== postEnum.DRAFT && allPostCondition(additional_params)) {
+  if (status !== statusEnum.DRAFT && allPostCondition(additional_params)) {
     return res.status(400).json({
       success: false,
       message: `Please provide all required fields for post`,
@@ -296,7 +280,7 @@ exports.updatePost = async (req, res) => {
   };
 
   try {
-    if (status !== postEnum.DRAFT && allPostCondition(additional_params)) {
+    if (status !== statusEnum.DRAFT && allPostCondition(additional_params)) {
       return res.status(400).json({
         success: false,
         message: `Please provide all required fields for post`,
@@ -380,6 +364,35 @@ exports.deletePost = async (req, res) => {
       success: false,
       message: err.message,
       data: {id }
+    });
+  }
+};
+
+exports.getPostDetail = async (req, res) => {
+  const { id } = req.query;
+  try {
+    const condition = `id='${id}'`;
+    const profile = await Post.getByCondtion(condition);
+    res.send(profile.pop());
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || RETRIEVE_ERROR + "detail."
+    });
+  }
+};
+
+exports.getFormDataDetail = async (req, res) => {
+  const { id } = req.query;
+  const fields = "id, form_id, data"
+  try {
+    const condition = `id='${id}'`;
+    const profile = await Form.getFieldsByCondition(fields, condition);
+    res.send(profile.pop());
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || RETRIEVE_ERROR + "detail."
     });
   }
 };

@@ -3,6 +3,8 @@ const {
     getAll,
     getByLimit,
     getByFields,
+    getFieldsByCondition,
+    getAndUnion,
     findById,
     getByCondtion,
     updateByCondition,
@@ -37,6 +39,8 @@ const {
   Post.getByFields = async(fields) => await getByFields(fields, TABLE);
 
   Post.getFieldsByCondition = async(fields, condition) => await getFieldsByCondition(fields, condition, TABLE);
+
+  Post.getAndUnion = async(column, fields, values, limit, offset) => await getAndUnion(column, fields, values, limit, offset, TABLE);
   
   Post.updateByCondition = async(condition, data) => {
     const query = `UPDATE ${TABLE} SET ${condition}`;

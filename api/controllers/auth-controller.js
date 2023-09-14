@@ -12,21 +12,12 @@ const { sendEmail } = require('../../middlewares/utils/email-service');
 const User = require('../models/user-model');
 const Token = require('../models/token-model');
 const UserInfo = require('../models/user-info-model');
+const {
+  userEnum,
+  webEnum,
+  tokenEnum
+} = require("../../middlewares/utils/enum");
 
-const userEnum = {
-  ADMIN: "Admin",
-  USER: "User"
-}
-
-const webEnum = {
-  WEB: "WEB",
-  CMS: "CMS"
-}
-
-const tokenEnum = {
-  VALID: "Valid",
-  INVALID: "Invalid"
-}
 /**
  * Logs in
  * POST:

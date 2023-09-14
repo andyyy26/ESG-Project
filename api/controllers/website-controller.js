@@ -5,6 +5,11 @@ const {
   RETRIEVE_ERROR
  } = require('../../middlewares/constant/const');
 const jwt = require('jsonwebtoken');
+const {
+  pageEnum,
+  postColumnEnum,
+  categoryEnum
+} = require("../../middlewares/utils/enum");
 
 // Save form
 exports.saveForm = async (req, res) => {
@@ -78,10 +83,17 @@ exports.getProfile = async (req, res) => {
 
 exports.getPosts = async (req, res) => {
   const { page_id, limit, offset } = req.query;
+  let condition;
+  let results;
   try {
-    const condition = `page_id = '${page_id}' AND status='PUBLISH' LIMIT ${offset},${limit}`;
-    const profile = await Post.getByCondtion(condition);
-    res.send(profile);
+    if(page_id === pageEnum.ACTIVITIES) {
+      results = await Post.getAndUnion(postColumnEnum.CATEGORY, '*', categoryEnum, limit, offset);
+      return res.send(results);
+    }
+
+    condition = `page_id='${page_id}' AND status='PUBLISH' LIMIT ${offset},${limit}`;
+    results = await Post.getByCondtion(condition);
+    res.send(results);
   } catch (err) {
     res.status(500).send({
       message:
