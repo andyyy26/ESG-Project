@@ -82,12 +82,18 @@ exports.getProfile = async (req, res) => {
 };
 
 exports.getPosts = async (req, res) => {
-  const { page_id, limit, offset } = req.query;
+  const { page_id, category, limit, offset } = req.query;
   let condition;
   let results;
   try {
-    if(page_id === pageEnum.ACTIVITIES) {
+    if(page_id === pageEnum.ACTIVITIES && !category) {
       results = await Post.getAndUnion(postColumnEnum.CATEGORY, '*', categoryEnum, limit, offset);
+      return res.send(results);
+    }
+
+    if(page_id === pageEnum.ACTIVITIES && category) {
+      condition = `category='${category}' AND status='PUBLISH' LIMIT ${offset},${limit}`;
+      results = await Post.getByCondtion(condition);
       return res.send(results);
     }
 

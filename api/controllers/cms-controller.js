@@ -310,32 +310,32 @@ exports.updatePost = async (req, res) => {
 };
 
 exports.updateESG = async (req, res) => {
-  const { id, status, content } = req.body;
+  const { page_id, content } = req.body;
 
-  if (!id || !status || !content) {
+  if (!page_id|| !content) {
     return res.status(400).send({
       success: false,
       message: "Missing params!!!",
-      data: { id, status, content }
+      data: { page_id, content }
     });
   }
 
   try {
-    const updatedCondition = `content = ? WHERE id = ?`
+    const updatedCondition = `content = ? WHERE page_id = ?`
     await Post.updateByCondition(
       updatedCondition,
-      [content, id]
+      [content, page_id]
     );
     res.status(200).json({
       success: true,
       message: 'Updated ESG successfully',
-      data: { id: id, status: status, content: content }
+      data: { page_id: page_id, content: content }
     });
   } catch (err) {
     res.status(500).send({
       success: false,
       message: err.message || UPDATED_ERROR + "ESG.",
-      data: { id, status, content }
+      data: { page_id, content }
     });
   }
 };
