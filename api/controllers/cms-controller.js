@@ -59,17 +59,17 @@ exports.getPosts = async (req, res) => {
   let availableFiedls = {};
   let postData;
   const { limit, offset, additional_params } = req.body;
-  const fields = "*"
-  const group = `GROUP BY 'release_date'`
+  // const fields = "*"
+  // const group = `GROUP BY 'release_date'`
   try {
     if (_.isEmpty(additional_params)) {
-      postData = await Post.getByLimit(fields, group);
+      postData = await Post.getAll();
       return res.status(200).json({
         message: "success",
         data: {
           total: postData.length,
           page: offset / limit + 1,
-          results: postData.slice(offset, limit)
+          results: postData.slice(offset, limit + offset)
         }
       });
     }
@@ -132,14 +132,14 @@ exports.getPosts = async (req, res) => {
       return condition;
     });
 
-    const finalCondition = conditions.join(" ") + ` ${group}`;
+    const finalCondition = conditions.join(" ");
     postData = await Post.getByCondtion(finalCondition);
     res.status(200).json({
       message: "success",
       data: {
         total: postData.length,
         page: offset / limit + 1,
-        results: postData.slice(offset, limit)
+        results: postData.slice(offset, limit + offset)
       }
     });
   } catch (err) {
@@ -164,7 +164,7 @@ exports.getFormData = async (req, res) => {
         data: {
           total: formData.length,
           page: offset / limit + 1,
-          results: formData.slice(offset, limit)
+          results: formData.slice(offset, limit + offset)
         }
       });
     }
@@ -197,7 +197,7 @@ exports.getFormData = async (req, res) => {
       data: {
         total: formData.length,
         page: offset / limit + 1,
-        results: formData.slice(offset, limit)
+        results: formData.slice(offset, limit + offset)
       }
     });
   } catch (err) {
@@ -237,6 +237,8 @@ exports.createPost = async (req, res) => {
       category: additional_params.category || "",
       content: additional_params.content || "",
       content_type: additional_params.content_type || "",
+      hot_news: additional_params.hot_news || "",
+      description: additional_params.description || "",
       status
     };
 
@@ -276,6 +278,8 @@ exports.updatePost = async (req, res) => {
     category: additional_params.category || "",
     content: additional_params.content || "",
     content_type: additional_params.content_type || "",
+    hot_news: additional_params.hot_news || "",
+    description: additional_params.description || "",
     status
   };
 
@@ -288,12 +292,13 @@ exports.updatePost = async (req, res) => {
       });
     }
 
-    const updatedCondition = `page_id = ?, source = ?, title = ?, image = ?, release_date = ?, category = ?, content = ?, content_type = ?, status = ? WHERE id = ?`
+    const updatedCondition = `page_id = ?, source = ?, title = ?, image = ?, release_date = ?, category = ?, content = ?, content_type = ?, status = ?, hot_news = ?, description = ? WHERE id = ?`
     await Post.updateByCondition(
       updatedCondition,
       [updatedData.page_id, updatedData.source, updatedData.title,
       updatedData.image, updatedData.release_date, updatedData.category,
-      updatedData.content, updatedData.content_type, updatedData.status, id]
+      updatedData.content, updatedData.content_type, updatedData.status,
+      updatedData.hot_news, updatedData.description, id]
     );
     res.status(200).json({
       success: true,
@@ -315,8 +320,8 @@ exports.updateESG = async (req, res) => {
   if (!page_id|| !content) {
     return res.status(400).send({
       success: false,
-      message: "Missing params!!!",
-      data: { page_id, content }
+      message: "Missing params. Required: page_id, content!!!",
+      data: null
     });
   }
 
@@ -336,6 +341,42 @@ exports.updateESG = async (req, res) => {
       success: false,
       message: err.message || UPDATED_ERROR + "ESG.",
       data: { page_id, content }
+    });
+  }
+};
+
+exports.updateHomePage = async (req, res) => {
+  const { page_id, content } = req.body;
+
+  if (!page_id|| !content) {
+    return res.status(400).send({
+      success: false,
+      message: "Missing params. Required: page_id, content!!!",
+      data: null
+    });
+  }
+
+  const encodingData = jwt.sign(
+    { data: content },
+    process.env.JWT_SECRET
+  );
+
+  try {
+    const updatedCondition = `content = ? WHERE page_id = ?`
+    await Post.updateByCondition(
+      updatedCondition,
+      [encodingData, page_id]
+    );
+    res.status(200).json({
+      success: true,
+      message: 'Updated homepage successfully',
+      data: { page_id: page_id, content: encodingData }
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: err.message || UPDATED_ERROR + "home page.",
+      data: { page_id, encodingData }
     });
   }
 };

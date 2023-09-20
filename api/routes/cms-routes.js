@@ -42,4 +42,8 @@ module.exports = (app) => {
   app
     .route('/api/v1/cms/form_detail')
     .get(validation.validateToken, cms.getFormDataDetail)
+
+  app
+    .route('/api/v1/cms/update_home_page')
+    .patch(validation.validateToken, cms.updateHomePage)
 };

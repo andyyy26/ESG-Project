@@ -8,6 +8,7 @@ const RETRIEVE_ERROR = "Some error occurred while retrieving"
 module.exports = { 
     UPLOAD_IMAGE_SUCCESS,
     UPLOAD_FILE_SUCCESS,
+    UPDATED_ERROR,
     GOOGLE_DRIVE_URL,
     CREATED_ERROR,
     RETRIEVE_ERROR

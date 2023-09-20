@@ -24,6 +24,8 @@ const {
     this.content = post.content;
     this.content_type = post.content_type;
     this.status = post.status;
+    this.hot_news = post.hot_news;
+    this.description = post.description;
   };
   
   Post.create = async(post) => await create(post, TABLE);
