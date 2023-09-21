@@ -1,5 +1,6 @@
 const { uploadFile } = require('../../middlewares/utils/file-uploader-service');
 const _ = require("lodash");
+const jwt = require('jsonwebtoken');
 const {
   UPLOAD_IMAGE_SUCCESS,
   UPLOAD_FILE_SUCCESS,
@@ -7,6 +8,7 @@ const {
 } = require('../../middlewares/constant/const');
 const Post = require("../models/post-model");
 const Form = require("../models/form-model");
+const Contact = require("../models/contact-model");
 const {
   allPostCondition
 } = require('../../middlewares/shared/validators');
@@ -16,8 +18,6 @@ const {
   UPDATED_ERROR
  } = require('../../middlewares/constant/const');
  const {
-  pageEnum,
-  postColumnEnum,
   inputFieldEnum,
   statusEnum
 } = require("../../middlewares/utils/enum");
@@ -55,15 +55,15 @@ exports.uploadFile = async (req, res) => {
       });
     })
 };
+
 exports.getPosts = async (req, res) => {
   let availableFiedls = {};
   let postData;
   const { limit, offset, additional_params } = req.body;
-  // const fields = "*"
-  // const group = `GROUP BY 'release_date'`
+  const filterCondition = `page_id='LIB' OR page_id='ATV'`;
   try {
     if (_.isEmpty(additional_params)) {
-      postData = await Post.getAll();
+      postData = await Post.getByCondtion(filterCondition);
       return res.status(200).json({
         message: "success",
         data: {
@@ -110,7 +110,7 @@ exports.getPosts = async (req, res) => {
       console.log(key);
       switch (key) {
         case inputFieldEnum.QUERY:
-          condition = `CONCAT_WS(content, title) like '%${availableFiedls[key]}%'`;
+          condition = `CONCAT_WS(content, title, source) like '%${availableFiedls[key]}%'`;
           break;
         case inputFieldEnum.TIME_RANGE:
           condition = `release_date BETWEEN ${availableFiedls[key]}`;
@@ -132,7 +132,7 @@ exports.getPosts = async (req, res) => {
       return condition;
     });
 
-    const finalCondition = conditions.join(" ");
+    const finalCondition = conditions.join(" ") + ` AND (${filterCondition})`;
     postData = await Post.getByCondtion(finalCondition);
     res.status(200).json({
       message: "success",
@@ -348,7 +348,7 @@ exports.updateESG = async (req, res) => {
 exports.updateHomePage = async (req, res) => {
   const { page_id, content } = req.body;
 
-  if (!page_id|| !content) {
+  if (!page_id || !content) {
     return res.status(400).send({
       success: false,
       message: "Missing params. Required: page_id, content!!!",
@@ -434,6 +434,26 @@ exports.getFormDataDetail = async (req, res) => {
     res.status(500).send({
       message:
         err.message || RETRIEVE_ERROR + "detail."
+    });
+  }
+};
+
+exports.getMessages = async (req, res) => {
+  try {
+    const { limit, offset } = req.query;
+    const messageList = await Contact.getAll();
+    return res.status(200).json({
+      message: "success",
+      data: {
+        total: messageList.length,
+        page: offset / limit + 1,
+        results: messageList.slice(offset, parseInt(limit) + parseInt(offset))
+      }
+    });
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || RETRIEVE_ERROR + "messages."
     });
   }
 };

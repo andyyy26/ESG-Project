@@ -22,4 +22,8 @@ module.exports = (app) => {
   app
   .route('/api/v1/search')
   .post(website.searchPosts);
+
+  app
+  .route('/api/v1/send_message')
+  .post(website.saveMessage);
 };

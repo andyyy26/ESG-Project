@@ -1,5 +1,6 @@
 const Form = require("../models/form-model");
 const Post = require("../models/post-model");
+const Contact = require("../models/contact-model");
 const { 
   CREATED_ERROR,
   RETRIEVE_ERROR
@@ -125,13 +126,48 @@ exports.getDetailPosts = async (req, res) => {
 exports.searchPosts = async (req, res) => {
   const { query, limit, offset } = req.body;
   try {
-    const condition = `CONCAT_WS(content, title) like '%${query}%' AND status='PUBLISH' LIMIT ${offset},${limit}`;
+    const condition = `CONCAT_WS(content, title, source) like '%${query}%' AND status='PUBLISH' LIMIT ${offset},${limit}`;
     const profile = await Post.getByCondtion(condition);
     res.send(profile);
   } catch (err) {
     res.status(500).send({
       message:
         err.message || RETRIEVE_ERROR + "posts."
+    });
+  }
+};
+
+// Save message
+exports.saveMessage = async (req, res) => {
+  // Validate request
+  if (!req.body) {
+    res.status(400).send({
+      message: "Body content can not be empty!"
+    });
+  }
+
+  const { full_name, email, phone_number, message } = req.body;
+
+
+  // Parse data to Contact
+  const contact = new Contact({
+    full_name: full_name,
+    email: email,
+    phone_number: phone_number,
+    message: message
+  });
+
+  // Save message in the database
+  try {
+    const result = await Contact.create(contact);
+    res.status(200).json({
+      success: true,
+      message: 'Save message successfully',
+      data: result,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: CREATED_ERROR + "message." + ` Error: ${err}`
     });
   }
 };

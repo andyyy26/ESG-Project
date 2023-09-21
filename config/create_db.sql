@@ -41,6 +41,8 @@ CREATE TABLE IF NOT EXISTS esg.posts(
     content_type CHAR(4) NULL,
     page_id char(10) NULL,
     status char(10) NOT NULL,
+    hot_news char(5) NULL,
+    description LONGTEXT NULL,
     PRIMARY KEY(id)  
 );
 
@@ -50,4 +52,15 @@ CREATE TABLE IF NOT EXISTS esg.tokens(
     status CHAR(7) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
+);
+
+CREATE TABLE IF NOT EXISTS esg.contacts(
+    id INT NOT NULL AUTO_INCREMENT,
+    full_name VARCHAR(250) NULL,
+    phone_number INT NULL,
+    message LONGTEXT NULL,
+    email VARCHAR(250) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX (email),
+    PRIMARY KEY(id)  
 );

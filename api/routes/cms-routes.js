@@ -46,4 +46,8 @@ module.exports = (app) => {
   app
     .route('/api/v1/cms/update_home_page')
     .patch(validation.validateToken, cms.updateHomePage)
+
+  app
+    .route('/api/v1/cms/list_messages')
+    .get(validation.validateToken, cms.getMessages)
 };
