@@ -136,9 +136,17 @@ exports.getFormData = async (req, res) => {
   const fields = "id, form_id, data"
 
   try {
-    const { limit, offset, additional_params } = req.body;
+    const { user_id, limit, offset, additional_params } = req.body;
+
+    if (!user_id) {
+      res.status(400).send({
+        message: "User id is required!"
+      });
+    }
+
+    const requiredCondition = `user_id='${user_id}'`;
     if (_.isEmpty(additional_params)) {
-      formData = await Form.getByFields(fields);
+      formData = await Form.getFieldsByCondition(fields, requiredCondition);
       return res.status(200).json({
         message: "success",
         data: {
@@ -169,7 +177,7 @@ exports.getFormData = async (req, res) => {
       return condition;
     });
 
-    const finalCondition = conditions.join(" ");
+    const finalCondition = conditions.join(" ") + ` AND ${requiredCondition}`;
     formData = await Form.getFieldsByCondition(fields, finalCondition);
     res.status(200).json({
       message: "success",
@@ -246,6 +254,21 @@ exports.saveMessage = async (req, res) => {
   } catch (err) {
     res.status(500).send({
       message: CREATED_ERROR + "message." + ` Error: ${err}`
+    });
+  }
+};
+
+exports.getFormDataDetail = async (req, res) => {
+  const { id } = req.query;
+  const fields = "id, form_id, data"
+  try {
+    const condition = `id='${id}'`;
+    const profile = await Form.getFieldsByCondition(fields, condition);
+    res.send(profile.pop());
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || RETRIEVE_ERROR + "detail."
     });
   }
 };

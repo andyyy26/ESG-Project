@@ -34,4 +34,8 @@ module.exports = (app) => {
   app
     .route('/api/v1/send_message')
     .post(website.saveMessage);
+
+  app
+    .route('/api/v1/form_detail')
+    .get(validation.validateToken, website.getFormDataDetail)
 };
