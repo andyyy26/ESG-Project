@@ -2,8 +2,7 @@ CREATE SCHEMA IF NOT EXISTS esg;
 
 CREATE TABLE IF NOT EXISTS esg.users(
     id VARCHAR(250) NOT NULL PRIMARY KEY,
-    first_name VARCHAR(250) NULL,
-    last_name VARCHAR(250) NULL,
+    user_name VARCHAR(250) NULL,
     email VARCHAR(250) NULL,
     password VARCHAR(250) NULL,
     role CHAR(5) NOT NULL,

@@ -110,8 +110,7 @@ exports.login = async (req, res) => {
  */
 exports.register = async (req, res) => {
   const {
-    first_name,
-    last_name,
+    user_name,
     email,
     password
   } = req.body;
@@ -151,8 +150,7 @@ exports.register = async (req, res) => {
     try {
       const newUser = new User({
         id: uuidv4(),
-        first_name: first_name ? first_name : '',
-        last_name: last_name ? last_name : '',
+        user_name: user_name ? user_name : '',
         email: email,
         password: bcrypt.hashSync(password, 14),
         role: userEnum.USER

@@ -1,6 +1,8 @@
+const _ = require("lodash");
 const Form = require("../models/form-model");
 const Post = require("../models/post-model");
 const Contact = require("../models/contact-model");
+const User = require('../models/user-model');
 const { 
   CREATED_ERROR,
   RETRIEVE_ERROR
@@ -12,6 +14,25 @@ const {
   categoryEnum
 } = require("../../middlewares/utils/enum");
 
+exports.getUserInfo = async (req, res) => {
+  const { user_id } = req.query;
+  if (!user_id) {
+    return res.status(400).send({
+      message: "User id is required!"
+    });
+  }
+
+  const condition = `id='${user_id}'`;
+  const userInfos = await User.getByCondtion(condition);
+  const userInfo = userInfos.shift();
+  console.log(JSON.stringify(userInfo));
+  res.status(200).json({
+    success: true,
+    message: 'Get data successfully',
+    data: { user_name: userInfo.user_name, email: userInfo.email }
+  });
+
+}
 // Save form
 exports.saveForm = async (req, res) => {
   // Validate request
@@ -105,6 +126,63 @@ exports.getPosts = async (req, res) => {
     res.status(500).send({
       message:
         err.message || RETRIEVE_ERROR + "posts."
+    });
+  }
+};
+
+exports.getFormData = async (req, res) => {
+  let availableFiedls = {};
+  let formData;
+  const fields = "id, form_id, data"
+
+  try {
+    const { limit, offset, additional_params } = req.body;
+    if (_.isEmpty(additional_params)) {
+      formData = await Form.getByFields(fields);
+      return res.status(200).json({
+        message: "success",
+        data: {
+          total: formData.length,
+          page: offset / limit + 1,
+          results: formData.slice(offset, limit + offset)
+        }
+      });
+    }
+    const { form_id } = additional_params;
+
+    if (form_id) {
+      availableFiedls.form_id = form_id.trim();
+    }
+
+    let condition = "";
+    const keys = Object.keys(availableFiedls)
+    const conditions = keys.map(key => {
+      console.log(key);
+      switch (key) {
+        default:
+          condition = `${key}='${availableFiedls[key]}'`;
+      }
+
+      if (keys.indexOf(key) !== keys.length - 1) {
+        condition += " AND";
+      }
+      return condition;
+    });
+
+    const finalCondition = conditions.join(" ");
+    formData = await Form.getFieldsByCondition(fields, finalCondition);
+    res.status(200).json({
+      message: "success",
+      data: {
+        total: formData.length,
+        page: offset / limit + 1,
+        results: formData.slice(offset, limit + offset)
+      }
+    });
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || RETRIEVE_ERROR + "form data."
     });
   }
 };
