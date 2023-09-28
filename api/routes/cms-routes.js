@@ -14,7 +14,7 @@ module.exports = (app) => {
   app
     .route('/api/v1/cms/posts')
     .post(validation.validateToken, cms.getPosts);
-  
+
   app
     .route('/api/v1/cms/form_data')
     .post(validation.validateToken, cms.getFormData);
@@ -35,7 +35,7 @@ module.exports = (app) => {
     .route('/api/v1/cms/delete_post')
     .delete(validation.validateToken, cms.deletePost);
 
-   app
+  app
     .route('/api/v1/cms/post_detail')
     .get(validation.validateToken, cms.getPostDetail)
 
@@ -50,4 +50,8 @@ module.exports = (app) => {
   app
     .route('/api/v1/cms/list_messages')
     .get(validation.validateToken, cms.getMessages)
+
+  app
+    .route('/api/v1/cms/get_by_page_id')
+    .get(validation.validateToken, cms.getByPageID)
 };

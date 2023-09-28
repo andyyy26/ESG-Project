@@ -46,8 +46,9 @@ async function uploadFile(file) {
             case FileTypeEnum.DOCX:
             case FileTypeEnum.PDF:
             case FileTypeEnum.MP4:
+                console.log(mimeType);
                 fileMetaData.parents.push(process.env.DOCUMENT_FOLDER);
-                media.mimeType = `file/${mimeType}`;
+                media.mimeType = `application/${mimeType}`;
                 break;
             default:
                 console.error(`File type $${mimeType} is not supported!!`);

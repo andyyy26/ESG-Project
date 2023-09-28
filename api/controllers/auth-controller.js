@@ -317,6 +317,63 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+/**
+ * Allows the user to reset their password by providing 2x new password with no code
+ * POST
+ * PARAMS:
+ * {
+ * "email": "",
+ * "password": "",
+ * }
+ */
+ exports.resetPasswordNoCode = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400).json({
+      success: false,
+      message: 'Please fill in all fields!',
+      data: null,
+    });
+  } else if (!validatePassword(password)) {
+    res.status(400).json({
+      success: false,
+      message:
+        'Your password must be at least 6 characters long and contain a lowercase letter, an uppercase letter, a numeric digit and a special character.',
+      data: null,
+    });
+  } else {
+    try {
+      const condition = `email='${email}'`;
+      const response = await User.getByCondtion(condition);
+      if (response.length === 0) {
+        res.status(400).json({
+          success: false,
+          message: 'User not found!',
+          data: null,
+        });
+      } else {
+        const newHashedPw = bcrypt.hashSync(password, 10);
+        const updatedCondition = `password = ? WHERE email = ?`
+        await User.updateByCondition(
+          updatedCondition,
+          [newHashedPw, email]
+        );
+        res.status(200).json({
+          success: true,
+          message: 'Password reset successfully',
+          data: null,
+        });
+      }
+    } catch (err) {
+      res.status(400).json({
+        success: false,
+        message: 'Something went wrong, please try again',
+        data: null,
+      });
+    }
+  }
+};
+
 exports.validateToken = async (req, res) => {
   const { token } = req.query;
   const decodeToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());

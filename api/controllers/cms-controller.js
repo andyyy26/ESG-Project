@@ -457,3 +457,29 @@ exports.getMessages = async (req, res) => {
     });
   }
 };
+
+exports.getByPageID = async (req, res) => {
+  try {
+    const { page_id } = req.query;
+    if (!page_id) {
+      return res.status(400).send({
+        success: false,
+        message: "Missing page_id!!!",
+        data: { page_id }
+      });
+    }
+
+    const condition = `page_id='${page_id}'`;
+    const pageContent = await Post.getByCondtion(condition);
+    res.status(200).json({
+      success: true,
+      message: `Get content for page ${page_id} successfully`,
+      data: pageContent.shift()
+    });
+  } catch (err) {
+    res.status(500).send({
+      message:
+        err.message || RETRIEVE_ERROR + `page ${page_id} content.`
+    });
+  }
+};

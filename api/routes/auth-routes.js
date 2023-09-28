@@ -1,6 +1,7 @@
 'use strict';
 module.exports = (app) => {
   const auth = require('../controllers/auth-controller');
+  const validation = require('../../middlewares/shared/token')
 
   app
     .route('/api/v1/auth/sign_up')
@@ -19,6 +20,10 @@ module.exports = (app) => {
     .post(auth.resetPassword);
 
   app
-  .route('/api/v1/auth/sign_out')
-  .post(auth.logout)
+    .route('/api/v1/auth/reset_password')
+    .post(validation.validateToken, auth.resetPasswordNoCode);
+
+  app
+    .route('/api/v1/auth/sign_out')
+    .post(auth.logout)
 };
