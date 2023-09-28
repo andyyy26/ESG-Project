@@ -5,6 +5,9 @@ const FileTypeEnum = {
     PDF: "pdf",
     DOCX: "docx",
     MP4: "mp4",
+    XLSX: "xlsx",
+    PPTX: "pptx",
+    CSV: "csv",
     JPEG: "jpeg",
     PNG: "png",
     JPG: "jpg"
@@ -46,9 +49,20 @@ async function uploadFile(file) {
             case FileTypeEnum.DOCX:
             case FileTypeEnum.PDF:
             case FileTypeEnum.MP4:
-                console.log(mimeType);
                 fileMetaData.parents.push(process.env.DOCUMENT_FOLDER);
                 media.mimeType = `application/${mimeType}`;
+                break;
+            case FileTypeEnum.XLSX:
+                fileMetaData.parents.push(process.env.DOCUMENT_FOLDER);
+                media.mimeType = `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`;
+                break;
+            case FileTypeEnum.PPTX:
+                fileMetaData.parents.push(process.env.DOCUMENT_FOLDER);
+                media.mimeType = `application/vnd.openxmlformats-officedocument.presentationml.presentation`;
+                break;
+            case FileTypeEnum.CSV:
+                fileMetaData.parents.push(process.env.DOCUMENT_FOLDER);
+                media.mimeType = `text/csv`;
                 break;
             default:
                 console.error(`File type $${mimeType} is not supported!!`);
